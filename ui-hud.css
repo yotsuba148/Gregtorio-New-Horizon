@@ -1,0 +1,118 @@
+/* Page-independent navigation, equipment and backpack. */
+#nav {
+  container: hud-rail / size;
+  width: clamp(72px, 7.5vw, 104px);
+  padding: 8px 6px;
+  gap: 0;
+  overflow: hidden;
+}
+
+#nav-pages {
+  display: grid;
+  gap: 5px;
+  flex: none;
+}
+
+#nav .navbtn {
+  grid-template-columns: 20px 1fr;
+  gap: 5px;
+  padding: 4px 5px;
+  min-height: 39px;
+}
+
+#nav .navbtn > .ui-glyph { width: 20px; height: 20px; }
+
+#tool-dock {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px solid var(--line);
+  min-height: 38px;
+  max-height: 250px;
+}
+
+.tool-dock-slots {
+  width: 100%;
+  min-height: 0;
+  flex: 1;
+  container-type: size;
+}
+
+#toolbar {
+  display: grid;
+  grid-template-columns: repeat(2, 26px);
+  grid-auto-rows: 26px;
+  justify-content: center;
+  gap: 4px;
+  max-height: max(0px, calc(round(down, calc(100cqh + 4px), 30px) - 4px));
+  overflow: clip;
+}
+
+#toolbar > .cell {
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border-color: var(--btn-bd);
+  background: var(--btn-bg);
+}
+
+#toolbar > .cell.empty > * { opacity: .42; }
+#toolbar > .cell:hover { border-color: var(--btn-on-bd); background: var(--btn-on-bg); }
+
+#nav .tool-management-button {
+  display: grid;
+  place-items: center;
+  width: 56px;
+  min-height: 28px;
+  padding: 0;
+  flex: none;
+}
+
+#nav .tool-management-button .ui-glyph { margin: 0; }
+
+#quests { transition-property: opacity; }
+
+#bottom {
+  container: hud-bag / inline-size;
+  min-width: 0;
+  padding: 6px 10px 8px;
+}
+
+#inventory {
+  --bag-columns: 23;
+  --bag-cell: 44px;
+  --bag-gap: 4px;
+  display: grid;
+  width: min(100%, calc(var(--bag-columns) * (var(--bag-cell) + var(--bag-gap)) - var(--bag-gap)));
+  grid-template-columns: repeat(var(--bag-columns), minmax(0, 1fr));
+  gap: var(--bag-gap);
+  margin-inline: auto;
+}
+
+#inventory > .cell {
+  width: 100%;
+  height: auto;
+  min-width: 0;
+  aspect-ratio: 1;
+  padding: 0;
+}
+
+#inventory > .cell > .cnt { pointer-events: none; }
+
+@container hud-bag (max-width: 716px) { #inventory { --bag-columns: 16; --bag-cell: 42px; } }
+@container hud-bag (max-width: 462px) { #inventory { --bag-columns: 12; --bag-cell: 36px; } }
+
+@container hud-rail (max-height: 485px) {
+  #nav-pages { gap: 3px; }
+  #nav .navbtn { min-height: 33px; padding-block: 3px; }
+  #tool-dock { margin-top: 6px; padding-top: 5px; }
+}
+
+@container hud-rail (max-height: 365px) {
+  #nav .navbtn { min-height: 27px; padding-block: 1px; font-size: 13px; }
+  #nav .navbtn > .ui-glyph { width: 17px; height: 17px; }
+}

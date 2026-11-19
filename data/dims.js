@@ -1,0 +1,1 @@
+window.GD=window.GD||{};window.GD.dims=[{"key":"overworld","name":"主世界"},{"key":"nether","name":"下界"},{"key":"twilight","name":"暮色森林"},{"key":"end","name":"末地"}];

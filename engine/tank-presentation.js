@@ -1,0 +1,9 @@
+(function(root){
+ 'use strict';
+ function supported(m){var d=DEFS.of(m.k);return d&&d.tankFront;}
+ function body(m,u){var front=supported(m);if(!front)return'';var d=STRUCTURES.instance(m);return'<span class="tank-front" data-tank-front style="width:'+u+'px;height:'+u+'px"><span class="tank-front-interior">'+FLUID_RENDERER.html(m.tanksIn&&m.tanksIn[0],d.fluidInputTanks[0])+'</span><img class="tank-front-frame" src="'+front+'_side.png" alt=""></span>';}
+ function context(m){var f=m.uid&&SINGLE_TANKS.board(ENGINE.state,m);return f?{board:f,index:ENGINE.networks.grid(f)}:null;}
+ function summary(m){var c=context(m);if(!c)return'';var group=SINGLE_TANKS.column(ENGINE.networks,c.board,m,null,c.index);if(group.length<2)return'';var amount=0,capacity=0,fluid='';group.forEach(function(n){var t=n.tanksIn[0];if(t){amount+=t.mb;fluid=t.f;}capacity+=STRUCTURES.instance(n).fluidInputTanks[0];});return group.length+' 格储罐，'+(fluid?FLUID_PRESENTATION.name(fluid)+' ':'')+amount.toLocaleString()+' / '+capacity.toLocaleString()+' mB';}
+ function refresh(m,host,c){var node=host.querySelector('[data-tank-front]'),d=STRUCTURES.instance(m);if(!node||!d.tankFront)return;c=c||context(m);var group=c?SINGLE_TANKS.column(ENGINE.networks,c.board,m,null,c.index):[m],at=group.indexOf(m),below=at>0,above=at<group.length-1,frame=node.querySelector('.tank-front-frame');node.classList.toggle('joined-below',below);node.classList.toggle('joined-above',above);var src=d.tankFront+(below?'_side_stacked.png':'_side.png');if(frame.getAttribute('src')!==src)frame.setAttribute('src',src);FLUID_RENDERER.update(node,m.tanksIn&&m.tanksIn[0],d.fluidInputTanks[0]);}
+ root.TANK_PRESENTATION={supported:supported,body:body,refresh:refresh,context:context,summary:summary};
+})(typeof window!=='undefined'?window:globalThis);

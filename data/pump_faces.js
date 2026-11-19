@@ -1,0 +1,1 @@
+Object.assign(GD.faceIcons,{"gregtech:gt.blockmachines@1140":"modicons/face/gt_pump_1140.png","gregtech:gt.blockmachines@1141":"modicons/face/gt_pump_1141.png","gregtech:gt.blockmachines@1142":"modicons/face/gt_pump_1142.png"});

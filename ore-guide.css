@@ -1,0 +1,56 @@
+#ore-guide{display:flex;flex-direction:column;flex:1;min-height:0;overflow:hidden;padding:8px 12px 10px 20px;color:#49351f;font-size:13px;line-height:1.5;gap:6px}
+#ore-guide[hidden]{display:none}
+#ore-guide button,#ore-guide input,#ore-guide select{font:inherit;color:inherit;border:1px solid #95734866;border-radius:4px;background:#b8945e19;min-width:0}
+#ore-guide button{cursor:pointer}
+#ore-guide button:hover{background-color:#fff4df9c;border-color:#8c682e}
+#ore-guide button.on{background-color:#fff3d8e6;border-color:#8c682e}
+.ore-search{display:flex;gap:5px;flex:none}.ore-search input{width:0;flex:1;padding:7px}.ore-search select{max-width:42%;padding:5px}
+.ore-count{font-size:11px;color:#806443;flex:none}
+.ore-results{max-height:76px;min-height:36px;flex:none;overflow:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(36px,1fr));grid-auto-rows:36px;gap:4px;scrollbar-gutter:stable}
+.ore-results button{height:36px;padding:2px;display:flex;justify-content:center;align-items:center}
+.ore-results .ic,.ore-results .ore-icon{flex:none;margin:0!important;vertical-align:middle}
+.ore-selected{font-size:15px;font-weight:bold;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:none;min-height:24px}
+.ore-modes{display:flex;gap:5px;flex:none}.ore-modes button{flex:1;padding:5px}
+.ore-body{flex:1;min-height:0;overflow:auto;scrollbar-gutter:stable}
+.ore-vein{border:1px solid #95734855;border-radius:5px;padding:9px;margin:0 2px 9px 0;background:#b8945e13}
+.ore-meta{font-size:11px;color:#785e3d;margin:4px 0 8px}
+.ore-layers{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px}.ore-layers>div{display:flex;flex-direction:column;align-items:center;font-size:10px;gap:4px}
+#ore-guide .ore-slot{position:relative;display:inline-flex;justify-content:center;align-items:center;box-sizing:border-box;width:43px;height:43px;padding:0;flex:none;vertical-align:top;margin:2px}
+#ore-guide .ore-slot>.ic,#ore-guide .ore-slot>.ore-icon,#ore-guide .ore-slot>.fluid-native{flex:none;margin:0!important;vertical-align:middle;pointer-events:none}
+#ore-guide .ore-amount{position:absolute;right:1px;bottom:0;font-size:10px;line-height:11px;pointer-events:none}
+.ore-empty{padding:12px 6px}.reference-tabs button{padding-left:7px;padding-right:7px}
+.ore-native{position:relative;width:166px;margin:2px auto 0;zoom:var(--ore-scale,1);color:#795c33;isolation:isolate}
+.ore-native>svg{position:absolute;inset:0;pointer-events:none}
+.ore-native>svg g>path{fill:none;stroke:#9b7c48;stroke-width:.8;stroke-linejoin:round}
+.ore-native>svg marker path{fill:#9b7c48}
+.ore-native-cell{position:absolute;width:0;height:0}
+#ore-guide .ore-native .ore-native-slot{position:absolute;display:flex;transform:translate(-50%,-50%);margin:0;width:18px;height:18px;border:.6px solid #a88a555c;border-radius:2px;padding:0;background:#b8945e1c;box-shadow:inset 0 .5px #fff7df70;overflow:visible}
+#ore-guide .ore-native .ore-big{width:26px;height:26px;border-color:#a4854c8c;background:#fff3d542}
+#ore-guide .ore-native .ore-empty-slot{border-color:#a88a5526;background:#b8945e09;box-shadow:none}
+#ore-guide .ore-native .ore-slot:hover{background-color:#fff4d799;border-color:#98713b}
+#ore-guide .ore-native .ore-slot:focus-visible:where(:root[data-focus-input="keyboard"] *){outline:1px solid #98713b;outline-offset:1px}
+#ore-guide .ore-native .ore-amount{font-size:8px;line-height:9px;right:0;bottom:0;color:#fff;text-shadow:1px 1px #222;background:none}
+#ore-guide .ore-native-machine{position:absolute;display:flex;justify-content:center;align-items:center;transform:translate(-50%,-50%);width:18px;height:18px;padding:0;border:.6px solid #a88a5540;border-radius:2px;background:#f1e0bbbf}
+#ore-guide .ore-native-machine>.ic,#ore-guide .ore-native-machine>.ore-icon{margin:0!important;flex:none;pointer-events:none}
+#ore-guide .ore-native-machine:hover{background-color:#fff4d7;border-color:#98713b}
+
+.ore-source-name{font-size:11px;font-weight:500;text-align:center;line-height:1.35;overflow-wrap:anywhere;color:var(--text)}
+
+
+/* 矿石处理流程与来源并入 JEI 详情 */
+.jei-ore-body{padding:2px 0 8px;overflow:auto}
+.jei-ore-body .ore-vein{display:block;margin:0 0 8px}
+.jei-ore-body .ore-native{margin:0 auto}
+
+
+/* 矿石来源：矿脉 + 维度正面图标 */
+.ore-vein-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.ore-vein-head .ore-meta{color:rgba(60,50,35,.72)}
+.ore-dims{display:flex;flex-wrap:wrap;gap:10px;margin-top:8px}
+.ore-dim{display:flex;align-items:center;gap:6px;padding:3px 8px 3px 3px;border-radius:4px;background:rgba(255,255,255,.5)}
+.ore-dim-face{width:28px;height:28px;image-rendering:pixelated;background:none;border:0}
+.ore-dim-text{display:flex;flex-direction:column;line-height:1.2}
+.ore-dim-text b{font-weight:600;font-size:12px;color:#3b3324}
+.ore-dim-text em{font-style:normal;font-size:11px;color:rgba(60,50,35,.6)}
+
+.jei-ore-glyph{width:22px;height:22px;image-rendering:pixelated;border:0;background:none}

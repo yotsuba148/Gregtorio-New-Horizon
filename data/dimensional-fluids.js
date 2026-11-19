@@ -1,0 +1,25 @@
+// GTNH 2.8.4 UndergroundFluids.cfg. Mean thousandths of a mB per operation at coefficient 0.5.
+GD.dimensionalFluids = {
+  overworld: [["gas_natural_gas",29057],["liquid_light_oil",29057],["liquid_medium_oil",51694],["liquid_heavy_oil",51694],["oil",51694]],
+  moon: [["helium-3",33948],["saltwater",14680]],
+  mercury: [["helium-3",62974],["molten.iron",30378]],
+  venus: [["molten.lead",129192],["sulfuricacid",18945],["carbondioxide",118748]],
+  mars: [["saltwater",30378],["chlorobenzene",30378]],
+  io: [["molten.lead",51694],["sulfuricacid",27112],["carbondioxide",57113]],
+  europa: [["saltwater",62974],["liquid_extra_heavy_oil",14680],["ic2distilledwater",279696]],
+  callisto: [["oxygen",14680],["liquidair",14680]],
+  titan: [["methane",62974],["ethane",14680]],
+  miranda: [["liquid_hydricsulfur",69304]],
+  oberon: [["carbonmonoxide",164994]],
+  triton: [["nitrogen",62974],["ethylene",62974]],
+  proteus: [["deuterium",57113]],
+  pluto: [["nitrogen",62974],["oxygen",62974],["liquidair",24707],["fluorine",63451]],
+  makemake: [["hydrofluoricacid_gt5u",24131]],
+  centauribb: [["molten.copper",24131]],
+  barnardac: [["liquid_extra_heavy_oil",62974],["unknowwater",24131]],
+  barnardae: [["liquidair",30378]],
+  barnardaf: [["molten.tin",30378]],
+  tcetie: [["liquid_extra_heavy_oil",14680],["hydrogen",57113],["ic2distilledwater",830265]],
+  ross128b: [["liquid_extra_heavy_oil",51694],["lava",62974],["gas_natural_gas",51694],["ic2distilledwater",395082]],
+  ross128ba: [["saltwater",99879],["helium-3",99879]]
+};

@@ -1,0 +1,25 @@
+#craft-workspace{flex:1 1 48%;min-width:0;min-height:0;display:flex;flex-direction:column;overflow:auto}
+#craft-workspace #detail{flex:1 0 auto;min-width:0;width:auto;overflow:visible}
+#manual-workbench{flex:none;padding:8px 14px;border-bottom:1px solid var(--line);background:var(--panel)}
+.workbench-heading{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;margin-bottom:6px}
+.workbench-heading .btn{font-size:12px;line-height:18px;padding:2px 6px}
+.workbench-row{display:flex;align-items:center;justify-content:center;gap:24px}
+.workbench-grid{display:grid;grid-template-columns:repeat(3,36px);gap:3px}
+.workbench-slot{position:relative;width:36px;height:36px;display:flex;align-items:center;justify-content:center;padding:0;border:1px solid var(--line);border-radius:5px;background:var(--panel2)}
+.workbench-slot:hover{border-color:var(--hi)}
+.workbench-slot.locked{background:repeating-linear-gradient(135deg,transparent,transparent 5px,#8882 5px,#8882 6px);opacity:.5}
+.workbench-slot .n{position:absolute;right:3px;bottom:0;color:#fff;font-size:12px;text-shadow:0 1px 2px #000;pointer-events:none}
+.workbench-result{width:46px;height:46px}
+.workbench-arrow{font-size:24px;color:var(--dim)}
+#craft-search-clear,#craft-refresh{padding:3px 10px;flex:none}
+.rc.craft-jump{outline:1px solid var(--hi);outline-offset:2px}
+@media(max-width:1050px){#craft-workspace{flex:none;overflow:visible}#manual-workbench{position:relative}#craft-workspace #detail{flex:none}}
+
+.jei-craft-placeholder{display:block;width:28px;flex:none}
+.jei-recipe-heading [data-jei-to-craft]{width:28px;flex:none}
+
+.catleft-heading{display:flex;align-items:center;justify-content:space-between;padding:4px 10px;border-bottom:1px solid var(--line);font-size:12px;color:var(--dim);flex:none}
+#itemlist .cell.no,#itemlist .cell.no:hover{opacity:1}
+@media(max-width:1050px){#catbody{display:block;overflow:auto}#catleft{height:210px;max-height:35vh;min-height:160px}#craft-workspace{display:block;overflow:visible}#catright{max-height:160px}}
+
+@container craftpage (max-width:560px){#catbody{display:block;overflow:auto}#catleft{height:210px;max-height:none;min-height:160px;flex:none}#craft-workspace{display:block;overflow:visible}#craft-workspace #detail{max-width:none}#catright{display:none}}

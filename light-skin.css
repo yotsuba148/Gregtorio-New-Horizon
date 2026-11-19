@@ -1,0 +1,87 @@
+/* Light mineral-grey skin. Only surfaces use transparency; sprites stay opaque. */
+#app #popup .four-zone-machine :is(.mb-material-zone,.mb-preview){background:var(--skin-surface);border-color:var(--skin-edge)}
+#app #popup .four-zone-machine :is(.mb-material-head,.mb-view-tools,.mb-port-heading small,.mb-current-heat){color:var(--skin-ink);border-color:var(--skin-edge)}
+:root{--skin-rgb:207,215,211;--skin-ink:#263734;--skin-muted:#455955;--skin-edge:#60777366;--skin-surface:rgba(var(--skin-rgb),var(--panel-opacity,.56));--skin-slot:rgba(72,88,84,.68)}
+#app :is(.page,#top,#nav,#bottom,#popup,#msgs,.ws-modal-back,#save-slots,#player-manual){--fg:var(--skin-ink);--dim:var(--skin-muted);--ui-muted:var(--skin-muted);--line:var(--skin-edge);--ui-edge:var(--skin-edge);--panel:var(--skin-surface);--panel2:#c5cfca;--btn-bg:#d8dfda9c;--btn-bd:#667b7380;--btn-on-bg:#a2b9aa;--btn-on-bd:#3d6654;--hi:#486f59;--hi-ink:#173c2b;--ok:#286d46;--bad:#943d32;--warn:#78551e;color:var(--skin-ink);text-shadow:none}
+#app :is(#top,#nav,#bottom){background:rgba(198,208,202,calc(.4 + var(--panel-opacity,.56)*.6));border-color:var(--skin-edge)}
+#nav .navbtn{color:var(--skin-ink);background:#e1e7e170;border-color:var(--skin-edge)}
+#nav .navbtn.on{background:#b4c7b9ce;border-color:#527563;box-shadow:inset 3px 0 #527563}
+#app .page{--scene-opacity:var(--panel-opacity,.56);--panel:var(--skin-surface);--ui-surface:var(--skin-surface);--scene-card:rgba(var(--skin-rgb),calc(var(--scene-opacity)*.8));--scene-slot:rgba(70,88,82,calc(.2 + var(--scene-opacity)*.6));text-shadow:none}
+#app .page :is(.panel,#catbody,#catbar,#catfoot,#chestpage,#tree-host,#farm-host,.fx-wrap,.fx-bar,.fx-blueprints-shell,.fx-blueprints,.settings-card,.manual-workbench-panel){background:var(--skin-surface);border-color:var(--skin-edge)}
+#app .page :is(.card,.facility-card,.slotbox,.chest,.forest-plot,.farm-plot,.farm-seed,.fx-tool,.matrix-top,.matrix-left,.matrix-corner){background:var(--scene-card);color:var(--skin-ink);border-color:var(--skin-edge)}
+#app #page-craft :is(#catleft,#catright,#detail,.material-matrix){background:rgba(var(--skin-rgb),calc(var(--scene-opacity)*.4))}
+#app #page-craft :is(.rc,.query-recipe){background:rgba(var(--skin-rgb),calc(var(--scene-opacity)*.7));border-color:var(--skin-edge)}
+#app #page-craft .rc.can{background:rgba(183,211,177,calc(.1 + var(--scene-opacity)*.65))}
+#app :is(.page,#popup,#msgs,#save-slots,.ws-modal-back) :is(h2,h3,h4,.dim,.sub,.slotname,.cardtx small,.ctop .warehouse-total,.chest-capacity,.settings-heading,.farm-title b,.farm-title small,.forest-title b,.forest-title small,.farm-status,.tree-state,.farm-note,.farm-roots p,.farm-seed small,.appearance-range-ends,.appearance-scope,.appearance-switch>b,.appearance-panel-control>label,.appearance-range-row>output,.dbglab,.dbgnow,.wp-note,.wp-heading h3,.facility-row small,.machine-heading,.machine-tier,.machine-status,.mb-panel-title,.mb-material-row,.mb-material-row>b,.mb-port-detail,.machine-io-title,.machine-io-label,.machine-energy,.queue-row small){color:var(--skin-ink);text-shadow:none}
+#app :is(.page,#popup,#save-slots,.ws-modal-back) :is(input:not([type=range]):not([type=checkbox]),select,textarea){background:#e3e9e2d9;color:var(--skin-ink);border-color:#6a807580;text-shadow:none}
+#app :is(.page,#popup,#save-slots,.ws-modal-back) select option{background:#d6ded8;color:var(--skin-ink)}
+#app :is(.page,#popup,#msgs,#save-slots,.ws-modal-back) .btn{color:var(--skin-ink);background:var(--btn-bg);border-color:var(--btn-bd);text-shadow:none}
+#app :is(.page,#popup,#msgs,#save-slots,.ws-modal-back) .btn:hover{background:#e8eee4d9}
+#app :is(.page,#popup,#save-slots,.ws-modal-back) .btn.on{background:#a7c2af;border-color:#456e56;color:#153b28}
+#app :is(.page,#popup) .btn:disabled{opacity:.52}
+#app #popup :is(.box,.wp-window,.wp-heading,.wp-body,.wp-toolbar,.wp-stock,.machine-window,.machine-body,.machine-heading,.foot,.machine-footer,.mb-port-card,.mb-structure,.hammer-recipes,.hammer-recipe){background:var(--skin-surface);border-color:var(--skin-edge);color:var(--skin-ink)}
+#app #popup :is(.machine-window,.wp-window,.box){--machine-text:var(--skin-ink);--machine-muted:var(--skin-muted);--machine-edge:var(--skin-edge);--mx-text:var(--skin-ink);--mx-muted:var(--skin-muted);box-shadow:0 12px 36px #172f2940}
+#app :is(.page,#popup,#bottom) :is(.islot,.oslot,.gvoid,.cslot,.mslot,.mb-slot,.resource-slot,.wash-slot,.workstation-slot,.cell){background:var(--scene-slot,var(--skin-slot));color:#f2f5ee;border-color:#84968b}
+#app #itemlist>.cell,#app .matrix-slot>.cell{background:rgba(114,133,121,calc(.28 + var(--panel-opacity,.56)*.45))}
+#app #itemlist>.cell.sel,#app .matrix-slot>.cell.sel{outline:2px solid #477358;background:#a7be9ec9}
+#app #bottom :is(.itname,.tlabel,.gh){color:#edf4ed;text-shadow:0 1px 2px #1c3226}
+#app #bottom .cell.empty{background:rgba(151,167,156,.45)}
+#app #bottom .cell.empty .gh{color:#405248;text-shadow:none}
+#app #msgs{background:#dce3dcf5;border-color:var(--skin-edge)}
+#msgs .msg :is(.ms,.mk,.when),#msgs .dim{color:var(--skin-ink)}
+#action-queue-popover{background:#dce4ddf5;color:var(--skin-ink);border-color:var(--skin-edge)}
+#action-queue-popover :is(.queue-select,.queue-select small,.btn){color:var(--skin-ink);font-variant-numeric:tabular-nums}
+.river-vista{border-color:var(--skin-edge)}
+.river-caption{background:#e2e9dfdd;color:#274638;text-shadow:none}
+.notice-bubble{border-color:#708a7a;background:#e2e9def5;color:#263f32;box-shadow:0 4px 16px #19342730}
+.notice-message{border-color:#9a7d4e}.notice-message>b{color:#705125}
+#app .page :is(summary,.ui-inline-title,.ui-section-title,.section-heading,.ui-empty,.facility-card) :is(b,p,small,em,.ui-glyph),#app .page :is(.ui-inline-title,summary,.facility-card em,.facility-chevron,.world-scenes .ui-glyph){color:var(--skin-muted)}
+#app #popup .wp-window :is(p,small,.wp-empty,.wp-empty h4,.wash-command>span),#app #popup .machine-heading>span:last-child,#app #popup .mx-tier{color:var(--skin-ink)}
+#app #bottom .btn{background:#d4dfd2c9;color:var(--skin-ink);border-color:var(--skin-edge)}
+#app .appearance-preview-panel{background:var(--skin-surface);color:var(--skin-ink);text-shadow:none}#app .appearance-preview-panel span{color:var(--skin-muted)}
+/* The parchment belongs to the quest book; JEI uses the shared mineral skin. */
+#quests.jei-mode{background:rgba(var(--skin-rgb),calc(.35 + var(--panel-opacity,.56)*.65));background-image:none;color:var(--skin-ink);border-color:var(--skin-edge)}
+#quests.jei-mode>h2,#quests.jei-mode #jei{background:transparent;color:var(--skin-ink);--jei-border:var(--skin-edge);--jei-surface:#dfe6dc80}
+#quests.jei-mode :is(.reference-tabs button,.jei-slots-title,.jei-empty,.jei-meta,.jei-label,.jei-saved-tabs,.jei-target){color:var(--skin-ink)}
+#quests.jei-mode :is(.reference-tabs button.on,#jei button.on){background:#a7c2af;border-color:#456e56;color:#153b28}
+#quests.jei-mode #jei :is(input,select){background:#e4eadecc;color:var(--skin-ink)}
+#quests.jei-mode #jei .jei-slot{background:#829b8770;border-color:#6b847777;color:#233b2d}
+#quests.jei-mode #jei button:hover{background:#dce8d7;border-color:#63806c}
+#app #popup .machine-window :is(.machine-process,.machine-settings,.mb-port-pane){background:rgba(192,205,196,calc(.15 + var(--panel-opacity,.56)*.7));border-color:var(--skin-edge)}
+#app #popup .machine-window :is(.io-toggle,.io-heading,.io-title,.io-side-title,.mx-eu,.mx-text,.mx-name,.mb-structure-title,.mb-size,.mb-port-name,summary){color:var(--skin-ink);text-shadow:none}
+#app #popup .machine-window .io-cover-slot.selected{background:#708f7b;border-color:#3f674f}
+#app #popup .machine-window :is(.io-cover-mode,.io-side-toolbar) .btn.on{background:#a7c2af!important;color:#153b28!important;border-color:#456e56!important}
+#app #popup .machine-window :is(.native-circuit,.mx-controller-circuit) .cgrid{background:#cad7cb}
+#app #popup .machine-window :is(.native-circuit,.mx-controller-circuit) .cgrid button{background:#e4eadd;color:#284333}
+#app #popup .machine-window :is(.native-circuit,.mx-controller-circuit) .cgrid button.on{background:#9fbfa5;color:#183c24;border-color:#3f674f}
+#app #popup .machine-window .mb-face{background:#bacac0;color:#344f41;border-color:#708e7d}
+#app #popup .machine-window .mb-face.on{background:#8caa94;outline-color:#3b6549}
+#app #popup .machine-window .machine-status{color:#785126}
+#app #popup .machine-window :is(.mx-sec,.mx-process-info,.mx-fl-l,.mb-tank-row,.mb-port-energy,.mb-port-energy strong,.mb-circuit-row,.mb-lock-row,.mb-output-items>span,.mb-casing-hint,.mb-casing-hint small){color:var(--skin-ink)}
+#app #popup .machine-window .mx-st{color:#705222}
+#app #popup .machine-window .mx-st.mx-run{color:#27683e}
+#app #popup .machine-window .mx-st.mx-bad{color:#973d32}
+#app #popup .machine-window .mplus{color:#e2e9df;opacity:.7}
+#app .fx-zoom-label,#app .fx-blueprints .ui-glyph{color:var(--skin-muted)}
+/* Specialist workstations and utility drawers share the same readable surfaces. */
+#app .page .ui-inline-title{color:var(--skin-ink)!important}
+#app .page :is(.ui-section-title h2,.farm-stats>span,.farm-stats b,.farm-seed-heading,.chest-target-badge,.world-equipment>b,.matrix-axis,.matrix-scroll-hint){color:var(--skin-ink)}
+#app .page :is(.travel-mode,.discovery-row,.world-equipment,.site-device),#app #popup :is(.wash-pot,.tw-window,.tw-header,.tw-tabs,.tw-body,.tw-footer,.sm-window,.sm-heading,.sm-body,.sm-station,.sm-footer,.discovery-row,.world-equipment,.site-device){background:var(--skin-surface);color:var(--skin-ink);border-color:var(--skin-edge)}
+#app #popup :is(.tw-body small,.tw-labelled>span,.tw-arrow,.tw-row-number,.tw-library-empty,.tw-hint,.tw-repair-plus,.tw-tool-info,.tw-tool-info p,.sm-heading small,.sm-input-heading,.sm-body h4,.sm-body h4 small,.sm-fuel>small,.sm-melt-state,.sm-fluid-row,.sm-fluid-row small,.sm-formed,.sm-parts small,.sm-hint,.sm-station>header>button:first-child,.sm-faucet>small,.sm-casting-deck small,.sm-cast-state,.sm-hopper,.sm-old-fluid,.wash-pot-title,.wash-arrow,.wp-owned-grid small,.repair-summary p,.world-equipment>b){color:var(--skin-ink)}
+#app #popup :is(.tw-slot,.sm-slot,.sm-output){background:var(--skin-slot);color:#eff4e9;border-color:#819887}
+#app #popup :is(.tw-placeholder,.sm-plus){color:#dce8d5;opacity:.7}
+#app #popup :is(.tw-part-row.selected,.sm-fluid-row.selected){background:#6c947b30;border-color:#557f60}
+#app #popup .tw-window .btn[aria-pressed=true]{background:#a7c2af;color:#153b28;border-color:#456e56}
+body :is(.saves-panel,.drops-panel,.trash-panel,.fluid-picker){background:rgba(var(--skin-rgb),.96);color:var(--skin-ink);border-color:var(--skin-edge);--fg:var(--skin-ink);--dim:var(--skin-muted);--btn-bg:#d8dfda;--btn-bd:#667b7380}
+body :is(.saves-rename label,.saves-row.current>span,.drops-foot>span,.drop-row>div>span,.drop-row time,.drops-empty,.trash-note,.fluid-picker button,.fluid-picker small,.fluid-picker-empty){color:var(--skin-ink)}
+body :is(.saves-panel,.drops-panel,.trash-panel) .btn{background:#d8dfda;color:var(--skin-ink);border-color:var(--skin-edge)}
+body .saves-rename input{background:#e3e9e2;color:var(--skin-ink);border-color:var(--skin-edge)}
+body .saves-error{color:#943d32}
+#app .page .matrix-focus{background:#aac2ad!important;color:#203d29!important}
+/* Warehouse wells stay light while following the panel opacity setting. */
+#app #page-chest #chestpage .cslot{background:rgba(182,195,188,calc(.24 + var(--panel-opacity,.56)*.54));color:var(--skin-ink);border-color:#72897d77;text-shadow:none}
+#app #page-chest #chestpage .cslot:not(.empty):hover{background:rgba(207,221,210,calc(.35 + var(--panel-opacity,.56)*.55));border-color:#466c55}
+#app #page-chest #chestpage .cslot .cn{color:var(--skin-ink);text-shadow:none}
+#app #page-chest #chestpage .cslot .cnt{color:#233a2e;text-shadow:0 0 2px #edf3e8,0 0 3px #edf3e8}
+
+#app #popup .multiblock-panel,#app #popup .multiblock-panel :is(.mb-formed,.mb-port-heading strong,.mb-port-heading small,.mb-port-energy,.mb-port-energy strong,.mb-circuit-row,.mb-lock-row,.mb-upgrade-preview){color:var(--skin-ink)}

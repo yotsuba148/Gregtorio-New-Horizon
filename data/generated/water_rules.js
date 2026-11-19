@@ -1,0 +1,1 @@
+GD.waterRules={"stirlingWaterPerSecond":150,"stirlingCapacity":8000,"collectorCapacity":400000,"collectorInterval":8,"collectorBaseAmount":10,"collectorOutputMbTick":40,"provenance":{"stirling":"bartworks.cfg + TileEntityHeatedWaterPump","collector":"Railcraft 9.16.33 TileTankWater"}};

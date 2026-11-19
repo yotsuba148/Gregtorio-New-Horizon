@@ -1,0 +1,3 @@
+/* Keep selection styles independent from the keyboard navigation indicator. */
+:where(button,[role="button"],input,select,textarea,a,[tabindex]):focus-visible{outline:none}
+:root[data-focus-input="keyboard"] :where(button,[role="button"],input,select,textarea,a,[tabindex]):focus-visible{outline:2px solid var(--focus-ring,#e4bc79);outline-offset:2px}

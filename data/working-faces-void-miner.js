@@ -1,0 +1,2 @@
+/* Controller working faces: idle + active. */
+Object.assign(GD.workingFaces,{"gregtech:gt.blockmachines@26763":{"idle":"modicons/working/26763-idle.png","active":"modicons/working/26763-active.png"},"gregtech:gt.blockmachines@26764":{"idle":"modicons/working/26764-idle.png","active":"modicons/working/26764-active.png"},"gregtech:gt.blockmachines@26765":{"idle":"modicons/working/26765-idle.png","active":"modicons/working/26765-active.png"}});

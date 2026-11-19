@@ -1,0 +1,13 @@
+/* Stable, compact utility windows; numerical counts do not resize controls. */
+.grid-furnace-window{width:380px;max-width:calc(100vw - 36px)}
+.grid-furnace-slots{display:flex;align-items:center;justify-content:center;gap:24px;padding:12px}
+.grid-furnace-slots>div{display:flex;flex-direction:column;gap:8px}
+.grid-furnace-slots .fslot{position:relative;width:48px;height:48px;display:grid;place-items:center}
+.grid-furnace-progress{width:110px;height:5px;background:#303638;margin:8px auto;border-radius:4px;overflow:hidden}
+.grid-furnace-progress i{display:block;height:100%;background:#91c58c}
+.grid-furnace-state{text-align:center;margin:10px 0}
+.pknum{width:7ch!important;min-width:7ch;font-variant-numeric:tabular-nums}
+.vein-ores{display:grid;gap:6px;margin:12px 0}.vein-ore{display:flex;align-items:center;gap:10px;padding:7px 10px;border:1px solid #ffffff20;border-radius:6px}.vein-ore-label{flex:1;min-width:0}.vein-ore>.ore-icon,.vein-ore>.ic{flex:0 0 auto}.vein-ore b{font-variant-numeric:tabular-nums;min-width:6ch;text-align:right}.vein-ore small{display:block}.vein-ore .btn{min-width:6em;flex:none}.vein-ore.excluded{opacity:.5}
+.loot-filter-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:6px;margin-top:12px}.loot-filter-grid button{display:flex;align-items:center;gap:7px;white-space:normal;text-align:left}.loot-filter-grid button[aria-pressed=true]{opacity:.5;text-decoration:line-through}
+
+.water-summary{display:flex;align-items:baseline;justify-content:space-between;gap:10px;padding:6px 0 12px}.water-summary strong{font-variant-numeric:tabular-nums}.water-summary small{font-weight:400;opacity:.7}

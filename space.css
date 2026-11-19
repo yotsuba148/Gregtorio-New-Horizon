@@ -1,0 +1,96 @@
+﻿.navbtn:disabled{opacity:.42;cursor:default}
+#space-host{container-type:inline-size;min-width:0}
+#app[data-page="space"] #main{background:transparent}
+#app[data-page="space"] #bg{inset:auto;left:var(--space-bg-left);top:var(--space-bg-top);width:var(--space-bg-width);height:var(--space-bg-height)}
+#app[data-page="space"] #bg .bl{filter:none;background-size:cover;background-position:65% center}
+.space-heading{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.space-heading h2{margin:0;font-size:20px}.space-planets{display:flex;gap:6px;flex:1;min-width:120px;overflow-x:auto}.space-planets .btn{white-space:nowrap;flex-shrink:0}
+#space-host select,.space-dialog select{font:inherit;font-size:12px;min-height:32px;padding:5px 8px;border:1px solid var(--line);border-radius:6px;background:var(--scene-slot);color:inherit}
+.space-heading [data-space-tier]{width:64px}
+.space-layout{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px;align-items:start;min-width:0}
+.space-info{display:grid;justify-items:start;gap:10px;min-width:0}
+.space-action-dock{--world-action-size:72px;--space-dock-columns:1;display:grid;grid-template-columns:repeat(var(--space-dock-columns),var(--world-action-size));gap:6px;justify-content:end}
+.space-action-dock :is(.space-earth-deck,.space-surface,.space-resource-cards):not([hidden]){display:contents}
+.space-action-tile>span:first-child{display:grid;place-items:center}
+.space-tile-name{text-wrap:balance}
+.space-action-tile:disabled{opacity:.55;cursor:default}
+.space-action-tile[data-space-action="launch"]:enabled,.space-cabin [data-space-action="return"]{border-color:var(--hi)}
+.space-route{width:min(100%,365px);box-sizing:border-box;padding:10px 14px}
+.space-route label{display:flex;align-items:center;gap:10px;font-size:14px}
+.space-route select{flex:1;min-width:0}
+.space-route [data-space-reason]{font-size:14px;line-height:1.4;margin:8px 0 0;overflow-wrap:anywhere}
+.space-route [data-space-reason]:empty{display:none}
+.space-map-scene{position:relative;justify-content:space-between;overflow:hidden;border-radius:10px;padding:0 clamp(8px,3vw,36px);background:radial-gradient(circle at 1px 1px,#d6e8ff80 1px,transparent 1.4px) 9px 2px/77px 61px,radial-gradient(circle at 1px 1px,#e4e4ff56 .8px,transparent 1.5px) 21px 11px/43px 53px,radial-gradient(ellipse at 75% 60%,#1a3049,#0e1727 48%,#080c15 100%)}
+.space-map-body{display:block;height:min(76%,180px);aspect-ratio:1;max-width:40%;object-fit:cover;border-radius:50%;image-rendering:pixelated;margin-inline:auto;pointer-events:none;filter:drop-shadow(0 0 24px #6ca0d048)}.space-map-body.belt{border-radius:0;object-fit:contain}.space-map-body[hidden]{display:none}
+.space-scene-caption{padding:10px 14px;max-width:100%;box-sizing:border-box}
+.space-scene-caption h3{font-size:clamp(19px,2vw,25px);font-weight:600;line-height:1.2;margin:0;overflow-wrap:anywhere}
+.space-scene-caption p{font-size:14px;line-height:1.45;margin:6px 0 0}
+.space-scene-caption p:empty{display:none}
+.space-primary{border-color:#8aafa3!important;background:#86ad9829!important;min-height:38px;font-size:14px!important}
+.space-slot{position:relative;width:48px;height:48px;display:inline-flex;align-items:center;justify-content:center;padding:4px;border:1px solid var(--edge,#8c9293);border-radius:7px;background:var(--scene-slot);color:inherit;box-sizing:border-box;flex-shrink:0}
+.space-slot>span{font-size:23px;opacity:.5}.space-slot b{position:absolute;bottom:1px;right:3px;font-size:12px;color:white;text-shadow:0 1px 3px #000}
+.space-fuel-bar{height:7px;border-radius:6px;background:#0003;overflow:hidden;margin:8px 0}.space-fuel-bar i{height:100%;display:block;width:0;background:#95c7b7;transition:width .18s linear}
+.space-cabin{display:grid;justify-content:end}
+.space-dialog{position:fixed;transform:translate(-50%,-50%);width:560px;box-sizing:border-box;display:flex;flex-direction:column;padding:0;overflow:hidden;background:var(--panel);color:var(--fg)}
+.space-dialog>header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:12px 16px;border-bottom:1px solid var(--line);flex-shrink:0}.space-dialog>header h3{font-size:16px;margin:0}
+.space-dialog-body{overflow:auto;padding:16px;min-height:0}.space-dialog p{font-size:12px;line-height:1.65;margin:8px 0}.space-dialog h4{font-size:14px;margin:0 0 6px}.space-vehicle-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.space-vehicle-grid label,.space-equipment-grid label{display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px}.space-vehicle-grid .space-slot{width:64px;height:64px}
+.space-equipment-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.space-equipment-grid small{font-size:11px;opacity:.7}
+.space-machine-line{display:flex;gap:12px;align-items:center;margin:0 0 16px}.space-machine-line>div:nth-child(2){flex:1}.space-station-deploy,.space-nasa-deploy{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.space-station-deploy span,.space-nasa-deploy span{font-size:13px}.space-generator-content{padding:12px 0;border-top:1px solid var(--line)}.space-generator-inputs,.space-generator-fluids,.space-generator-outputs{display:inline-flex;gap:6px;margin-right:8px;flex-wrap:wrap;vertical-align:middle}
+.space-nasa-workbench>header{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:10px;margin-bottom:12px}.space-nasa-workbench select{width:100%;min-width:0}.space-nasa-schematics{display:flex;align-items:center;justify-content:flex-end;min-width:5.5em;font-size:12px}.space-schematic-known{color:#a9d3a8}.space-nasa-requirements{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:7px}
+.space-nasa-part{display:flex;align-items:center;gap:9px;padding:8px;border:1px solid var(--line);border-radius:7px;min-width:0;background:var(--scene-card)}.space-nasa-part.ready{border-color:#81ac825e}.space-part-icon{position:relative;flex-shrink:0;width:38px;height:38px;display:grid;place-items:center}.space-part-icon>b{position:absolute;right:0;bottom:-1px;font-size:12px;color:white;text-shadow:0 1px 3px black}.space-nasa-part>div:nth-child(2){min-width:0}.space-nasa-part b{font-size:12px;overflow-wrap:anywhere}.space-nasa-part small{display:block;margin-top:4px;font-size:11px;opacity:.7}
+.space-nasa-workbench>footer{display:flex;align-items:center;gap:12px;padding-top:14px;margin-top:14px;border-top:1px solid var(--line)}.space-nasa-workbench>footer>div:nth-child(2){flex:1;min-width:0}.space-nasa-workbench>footer h3{font-size:15px;margin:0}.space-confirm-actions{display:flex;justify-content:flex-end;gap:8px;margin-top:16px}
+.space-cinema-overlay{position:fixed;inset:0;z-index:11000;background:#000e;display:flex;align-items:center;justify-content:center;padding:4vh 5vw;box-sizing:border-box;animation:space-cinema-in .25s ease-out;color:#eee;text-shadow:none}
+.space-cinema{width:min(100%,1600px);height:min(100%,900px);display:flex;flex-direction:column;position:relative;background:#000;border:1px solid #ffffff25;border-radius:8px;overflow:hidden}
+.space-cinema>header,.space-cinema>footer{position:absolute;z-index:2;left:0;right:0;display:flex;align-items:center;gap:12px;padding:14px 18px;transition:opacity .18s;background:linear-gradient(#000b,#0000);pointer-events:auto}
+.space-cinema>header{top:0;justify-content:space-between}.space-cinema>footer{bottom:0;background:linear-gradient(#0000,#000b)}.space-cinema .btn{color:#eee;background:#1b2027ad;border-color:#ffffff36;font-size:13px}.space-cinema .spacer{flex:1}
+.space-film-screen{height:100%;width:100%;display:flex;align-items:center;justify-content:center;position:relative;min-height:0}.space-film-screen video{width:100%;height:100%;object-fit:contain;background:#000}
+.space-cinema-overlay.controls-hidden{cursor:none}.controls-hidden .space-cinema>header,.controls-hidden .space-cinema>footer{opacity:0;pointer-events:none}
+.space-orbit{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background-size:cover;background-position:center;text-align:center}.space-orbit h2{font-size:clamp(22px,3vw,42px);font-weight:500;text-shadow:0 2px 10px #000;margin:0 0 26px}.space-orbit .btn{font-size:16px!important;padding:12px 32px}
+@keyframes space-cinema-in{from{opacity:0}to{opacity:1}}
+@container(max-width:600px){.space-heading{gap:8px}.space-planets{min-width:0}.space-action-dock{--world-action-size:66px;--space-dock-columns:2}}
+@container(max-width:330px){.space-layout{grid-template-columns:minmax(0,1fr)}.space-action-dock{justify-content:start;--space-dock-columns:3}}
+@media(max-height:900px){.space-action-dock{--space-dock-columns:2}}
+@media(prefers-reduced-motion:reduce){.space-cinema-overlay{animation:none}.space-cinema>header,.space-cinema>footer{transition:none}}
+
+
+.space-action-picker{width:min(100%,475px)}
+.space-action-picker .slotbox{margin:0;min-height:0}
+.space-action-picker .pkrow{flex-wrap:wrap}
+.space-action-picker .pkrow input[type=range]{min-width:60px}
+
+.space-dialog{container-type:inline-size}@container(max-width:380px){.space-dialog>header{padding:6px 8px;gap:8px}.space-dialog>header h3{font-size:14px}.space-dialog>header .btn{font-size:12px;min-height:26px;padding:3px 7px}.space-dialog-body{padding:6px}.space-equipment-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.space-dialog .space-slot{width:42px;height:42px}.space-vehicle-grid .space-slot{width:44px;height:44px}.space-nasa-requirements{grid-template-columns:1fr}.space-nasa-workbench>footer{flex-wrap:wrap}.space-nasa-workbench>footer>.btn{width:100%}.space-machine-line{flex-wrap:wrap}.space-machine-line .btn{font-size:11px}.space-dialog .space-confirm-actions{flex-wrap:wrap}}
+
+.space-film-volume{width:64px;height:20px;accent-color:#c9a227;background:transparent;cursor:pointer;flex:0 0 64px}
+.space-film-progress{flex:1 1 auto;min-width:120px;height:20px;accent-color:#c9a227;background:transparent;cursor:pointer}
+.space-film-time{font-variant-numeric:tabular-nums;color:#c9c3b4;font-size:12px;white-space:nowrap}
+
+.space-launch-fx{position:fixed;z-index:11001;overflow:hidden;pointer-events:none;contain:strict}
+.space-launch-trail{position:absolute;left:calc(var(--launch-x) - 5px);top:var(--launch-y);width:10px;height:170px;border-radius:60%;transform-origin:top center;background:linear-gradient(#fffce9 0%,#ffe6a2 10%,#ffaf49b3 38%,#ef682329 74%,transparent);filter:drop-shadow(0 0 9px #ffbc63)}
+.space-launch-trail::before{content:"";position:absolute;top:-8px;left:-4px;width:18px;height:27px;border-radius:50%;background:radial-gradient(ellipse,#fff 12%,#ffe9ae 38%,#ffc06677 65%,transparent 74%)}
+.space-launch-flash{position:absolute;left:var(--launch-x);top:var(--launch-y);width:88px;height:88px;border-radius:50%;background:radial-gradient(#fff1c488,#ffb65c33 40%,transparent 70%)}
+.space-launch-spark{position:absolute;left:var(--launch-x);top:var(--launch-y);width:3px;height:5px;border-radius:50%;background:#ffe2a0;box-shadow:0 0 5px #ffb355}
+.space-arrival .space-orbit>div{padding:24px}
+.space-arrival .space-orbit small{display:block;margin-bottom:16px;font-size:13px;letter-spacing:.18em;text-shadow:0 1px 5px #000}
+
+/* 星球矿脉：航天页自己的列表，不借世界页的矿脉弹窗 */
+.space-survey{display:grid;gap:8px}
+.space-survey-count{margin:0;font-size:12px;opacity:.82}
+.space-survey-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:10px;align-items:center;padding:7px 9px;border:1px solid rgba(127,127,127,.34);border-radius:7px}
+.space-survey-face{display:flex;gap:2px;align-items:center}
+.space-survey-text{display:grid;gap:2px;min-width:0}
+.space-survey-text b{font-size:13px}
+.space-survey-text small{font-size:11px;opacity:.78;line-height:1.35}
+.space-survey-actions{display:flex;gap:6px}
+.space-survey-empty{margin:0;font-size:12px;opacity:.72}
+.space-survey-foot{display:flex;gap:10px;align-items:center;justify-content:flex-end;padding-top:4px}
+.space-survey-foot label{display:flex;gap:6px;align-items:center;font-size:12px}
+.space-survey-foot input {
+  width: 64px;
+  color: var(--fg);
+  background-color: var(--panel2);
+  border-color: var(--line);
+  color-scheme: dark;
+  text-shadow: none;
+}
+:root[data-ui-skin="light"] .space-survey-foot input { color-scheme: light; }
+

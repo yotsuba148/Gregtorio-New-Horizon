@@ -1,0 +1,706 @@
+<!doctype html>
+<html lang="zh-CN" data-game-loading>
+<head>
+<link rel="icon" href="data:,">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gregtorio:New Horizon</title>
+<style>
+  #game-loading { display:none; }
+  html[data-game-loading] #app { visibility:hidden; }
+  html[data-game-loading] #game-loading {
+    position:fixed;
+    inset:0;
+    z-index:21000;
+    display:grid;
+    place-items:center;
+    background:#211a13;
+    color:#e7dbc5;
+    font:500 16px/1.4 system-ui,sans-serif;
+  }
+</style>
+<link rel="stylesheet" href="style.css?v=0.1.0">
+<link rel="stylesheet" href="world-work.css?v=0.1.0">
+<link rel="stylesheet" href="ui-polish.css?v=0.1.0">
+<link rel="stylesheet" href="crop-nursery.css?v=0.1.0">
+<link rel="stylesheet" href="ui-focus.css?v=0.1.0">
+<link rel="stylesheet" href="jei.css?v=0.1.0">
+<link rel="stylesheet" href="ore-guide.css?v=0.1.0">
+<link rel="stylesheet" href="machine-ui.css?v=0.1.0">
+<link rel="stylesheet" href="multiblock-window.css?v=0.1.0">
+<link rel="stylesheet" href="appearance.css?v=0.1.0">
+<link rel="stylesheet" href="save-slots.css?v=0.1.0">
+<link rel="stylesheet" href="manual-workbench.css?v=0.1.0">
+<link rel="stylesheet" href="quest-ui.css?v=0.1.0">
+<link rel="stylesheet" href="ae.css?v=0.1.0">
+<link rel="stylesheet" href="tinker-workstations.css?v=0.1.0">
+<link rel="stylesheet" href="smeltery-ui.css?v=0.1.0">
+<link rel="stylesheet" href="world-factory.css?v=0.1.0">
+<link rel="stylesheet" href="world-sites.css?v=0.1.0">
+<link rel="stylesheet" href="world-map.css?v=0.1.0">
+<link rel="stylesheet" href="visual-finish.css?v=0.1.0">
+<link id="light-skin" rel="stylesheet" href="light-skin.css?v=0.1.0">
+<link rel="stylesheet" href="structure-placement.css?v=0.1.0">
+<link rel="stylesheet" href="rc-tanks.css?v=0.1.0">
+<link rel="stylesheet" href="fluid-renderer.css?v=0.1.0">
+<link rel="stylesheet" href="pipe-ui.css?v=0.1.0">
+<link rel="stylesheet" href="portal-frame.css?v=0.1.0">
+<link rel="stylesheet" href="line-storage.css?v=0.1.0">
+<link rel="stylesheet" href="item-filter.css?v=0.1.0">
+<link rel="stylesheet" href="space.css?v=0.1.0">
+<link rel="stylesheet" href="eio.css?v=0.1.0">
+<link rel="stylesheet" href="ui-hud.css?v=0.1.0">
+</head>
+<body>
+<div id="game-loading" role="status" lang="en">Loading…</div>
+<script>
+  window.addEventListener('error', function (event) {
+    if (!document.documentElement.hasAttribute('data-game-loading')) return;
+    if (!(event instanceof ErrorEvent) && !(event.target instanceof HTMLScriptElement)) return;
+    const status = document.getElementById('game-loading');
+    status.lang = 'zh-CN';
+    status.textContent = '加载失败，请刷新重试。';
+  }, true);
+</script>
+<div id="app">
+
+  <!-- 背景。会变的那几张用两层叠着淡入淡出 -->
+  <div id="bg" aria-hidden="true">
+    <div class="bl" id="bg0"></div>
+    <div class="bl" id="bg1"></div>
+  </div>
+
+  <header id="top">
+    <span id="era">Gregtorio:New Horizon</span>
+    <span id="env" class="dim"></span>
+    <span id="topslot" class="topslot"></span>
+    <span class="spacer"></span>
+    <span id="invcount" class="dim"></span>
+    <button id="dropopen" data-drop-open>掉落物</button>
+    <button id="trashopen" data-trash-open aria-label="垃圾桶" data-tip="垃圾桶"><svg width="16" height="18" viewBox="0 0 20 22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 5h16M7 5V2h6v3M4 5l1 15h10l1-15M8 8v9m4-9v9"/></svg></button>
+    <button id="msgopen" data-msgx="open" title="消息栏">消息</button>
+    <button id="save-error" hidden data-save-retry>保存失败，点击重试</button>
+    <button id="saveopen" data-save-open aria-controls="save-slots" aria-expanded="false"><span>存档</span><span class="save-current-name"></span><span aria-hidden="true">▾</span></button>
+  </header>
+
+  <div id="body">
+    <aside id="nav">
+      <nav id="nav-pages" aria-label="页面"></nav>
+      <div id="tool-dock" role="group" aria-label="工具栏">
+        <div class="tool-dock-slots"><div id="toolbar"></div></div>
+        <button class="btn tool-management-button" type="button" data-wp-tools="1" aria-label="工具管理" data-tip="工具管理"></button>
+      </div>
+    </aside>
+
+    <main id="main">
+
+      <!-- 世界：地图和地点操作共用一个视图，动作队列在顶栏。 -->
+      <section class="page" id="page-world">
+        <div id="worldleft">
+          <div class="world-map-grid">
+            <div id="dimtabs"></div>
+            <div id="world-map-stage" aria-label="世界地图" role="group" hidden>
+              <div id="world-map-frame">
+                <div id="world-map-art" aria-hidden="true"></div>
+                <div id="world-map-targets"></div>
+              </div>
+            </div>
+            <div class="panel" id="world-actions-panel">
+              <div id="slot"></div>
+              <header id="world-actions-heading" hidden>
+                <h2 id="world-region-title" aria-live="polite"></h2>
+                <button type="button" id="world-actions-close" class="btn" aria-label="收起行动">×</button>
+              </header>
+              <div id="actions"></div>
+            </div>
+          </div>
+          <div class="panel" id="world-fieldwork"><h2 class="ui-inline-title"><span data-ui-glyph="settings"></span>就地加工</h2><div id="fieldwork"></div></div>
+        </div>
+      </section>
+
+      <!-- 2 合成：图鉴 -->
+      <section class="page craft" id="page-craft" hidden>
+        <div id="catbar">
+          <span data-ui-glyph="search" aria-hidden="true"></span>
+          <input id="q" type="text" autocomplete="off"
+                 placeholder="搜索：汉字 / 全拼 / 首字母　（qtb → 青铜板）">
+          <button type="button" class="btn" id="craft-search-clear" title="清空搜索" aria-label="清空合成搜索">×</button>
+        </div>
+        <div id="catbody">
+          <div id="catleft">
+            <div class="catleft-heading"><span>物品图鉴</span><button type="button" class="btn" id="craft-refresh" title="刷新可合成排序" aria-label="刷新可合成排序">↻</button></div>
+            <div id="itemlist"></div>
+            <div id="catfoot">
+              <span id="tabs"></span>
+              <span class="matrix-scroll-hint">按住shift+滚轮可以左右滚动</span>
+              <span id="pager"></span>
+            </div>
+          </div>
+          <div id="craft-workspace"><section id="manual-workbench" aria-label="手动摆放"></section><div id="detail"></div></div>
+          <div id="catright">
+            <h3><span data-ui-glyph="clock" aria-hidden="true"></span>查看历史</h3>
+            <div id="history"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3 仓库：箱子各装各的，在这儿拖东西进去 -->
+      <section class="page" id="page-chest" hidden>
+        <div class="panel" id="chestpage"></div>
+      </section>
+
+      <!-- 4 农业 -->
+      <section class="page" id="page-agri" hidden>
+        <div id="farm-host"></div>
+      </section>
+
+      <!-- 4 机器：小作坊（区 / 发电区 / 机器区 / 槽位），内容由 workshop.js 画 -->
+      <section class="page" id="page-machine" hidden>
+        <div id="ws-host"></div>
+      </section>
+
+      <!-- 5 产线：厂房，机器自己摆，管道自己走 -->
+      <section class="page" id="page-line" hidden>
+        <div id="fx-host"></div>
+      </section>
+
+      <!-- 6 设置：调试 -->
+      <section class="page" id="page-space" hidden><div id="space-host"></div></section>
+      <section class="page" id="page-settings" hidden>
+        <div class="panel">
+          <header class="settings-intro">
+            <div class="settings-intro-main">
+              <div class="ui-section-title"><span data-ui-item="minecraft:comparator@0"></span><div><h2>设置</h2></div></div>
+              <button type="button" id="player-manual-open" class="btn settings-manual-open" aria-haspopup="dialog" aria-controls="player-manual"><span data-ui-glyph="book"></span>Gregtorio使用手册</button>
+            </div>
+            <a class="settings-author" href="https://github.com/yotsuba148" target="_blank" rel="noopener noreferrer" title="GitHub 主页">
+              <span>作者 大梦阐释者</span>
+              <span lang="en">Made by PhantasDream</span>
+            </a>
+          </header>
+          <section class="settings-card">
+            <h3 class="settings-heading"><span data-ui-glyph="monitor"></span>界面缩放</h3>
+            <div id="zoombox"></div>
+          </section>
+          <section class="settings-card">
+            <h3 class="settings-heading"><span data-ui-glyph="grid"></span>外观</h3>
+            <div id="appearance-settings"></div>
+          </section>
+          <details class="settings-card settings-developer">
+            <summary><span data-ui-glyph="terminal"></span>开发者工具</summary>
+            <h3 class="sub">调试</h3>
+            <div id="dbgbox"></div>
+            <div id="developer-commands" hidden>
+            <h3 class="sub">指令</h3>
+            <div id="cmdbar">
+              <input id="cmd" type="text" autocomplete="off" spellcheck="false"
+                     placeholder="输 help 查看指令">
+              <button class="btn" data-cmdrun="1">执行</button>
+            </div>
+            <div id="cmdlog"></div>
+            </div>
+          </details>
+        </div>
+      </section>
+
+    </main>
+    <!-- 网页正下方的小提示：东西进仓库了。挂在这儿是为了正好压在物品栏上面 -->
+    <div id="gainbox"></div>
+  </div>
+
+  <aside id="quests">
+    <h2>
+      <span class="reference-tabs" role="tablist" aria-label="右侧工具"><button data-side-view="quests" role="tab" class="on">任务书</button><button data-side-view="jei" role="tab">JEI</button></span>
+      <span class="dim" id="questcount"></span>
+      <span class="spacer"></span>
+      <button id="qclose" data-qx="close" title="收起任务书">›</button>
+    </h2>
+    <!-- 章节做成顶部一坨标签，固定不滚：9 个章节任何时候都在，谁也挤不走谁 -->
+    <nav id="questchaps"></nav>
+    <div id="questfinder" hidden>
+      <input id="quest-search" type="search" aria-label="搜索任务书" placeholder="搜任务、材料、正文或 ID" autocomplete="off">
+      <button type="button" id="quest-search-ready" aria-pressed="false">可确认</button>
+      <div id="quest-search-results" hidden></div>
+    </div>
+    <div id="questtreepanel">
+      <div id="questlist"></div>
+      <nav id="questmarkers" aria-label="跳到任务"></nav>
+    </div>
+    <div id="jei" hidden></div>
+    </aside>
+
+  <!-- 鼠标停在任务上时冒出来的需求详情。是普通 div，不是浏览器弹窗。 -->
+  <div id="qtip" hidden></div>
+  <!-- 任务书收起以后露出来的把手，贴在右边 -->
+  <button id="qopen" data-qx="open" title="展开任务书">任务书</button>
+
+  <footer id="bottom" aria-label="物品栏">
+    <div id="inventory"></div>
+  </footer>
+
+  <div id="popup" hidden></div>
+  <dialog id="player-manual" aria-labelledby="player-manual-title">
+    <header class="player-manual-head">
+      <h2 id="player-manual-title">Gregtorio使用手册</h2>
+      <form method="dialog"><button class="btn" autofocus>关闭</button></form>
+    </header>
+    <section id="player-manual-list" tabindex="0" aria-label="手册正文"></section>
+  </dialog>
+  <!-- 消息栏：永远压在最上层，任何页面都能翻。破了工具、缺了料这类事都记在这里 -->
+  <aside id="msgs" hidden>
+    <h2>
+      <span>消息</span>
+      <span class="dim" id="msgcount"></span>
+      <span class="spacer"></span>
+      <button id="msgclear" data-msgx="clear" title="清空消息">清空</button>
+      <button id="msgclose" data-msgx="close" title="收起">×</button>
+    </h2>
+    <div id="msglist"></div>
+  </aside>
+  <!-- 点哪儿冒哪儿的小提示，1.6 秒自己消失。也不是浏览器弹窗。 -->
+  <div id="toast"></div>
+</div>
+
+<div id="weather-particles" aria-hidden="true" hidden></div>
+
+<script data-runtime src="data/items.js?v=0.1.0"></script>
+<script data-runtime src="data/mvitems.js?v=0.1.0"></script>
+<script data-runtime src="data/fuels.js?v=0.1.0"></script>
+<script data-runtime src="data/coils.js?v=0.1.0"></script>
+<script data-runtime src="data/tools.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/tool_rules.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-rules.js?v=0.1.0"></script>
+<script data-runtime src="data/pin.js?v=0.1.0"></script>
+<script data-runtime src="data/craft.js?v=0.1.0"></script>
+<script data-runtime src="data/machines.js?v=0.1.0"></script>
+<script data-runtime src="data/furnace.js?v=0.1.0"></script>
+<script data-runtime src="data/catalog.js?v=0.1.0"></script>
+<script data-runtime src="data/veins.js?v=0.1.0"></script>
+<script data-runtime src="data/veins-nh.js?v=0.1.0"></script>
+<script data-runtime src="data/planet-veins.js?v=0.1.0"></script>
+<script data-runtime src="data/raw-ore.js?v=0.1.0"></script>
+<script data-runtime src="data/sources.js?v=0.1.0"></script>
+<script data-runtime src="data/world_resources.js?v=0.1.0"></script>
+<script data-runtime src="data/dims.js?v=0.1.0"></script>
+<script data-runtime src="data/quests.js?v=0.1.0"></script>
+<script data-runtime src="data/quest-logic-fix.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/quest_rules.js?v=0.1.0"></script>
+    <script data-runtime src="data/quest-patches.js?v=0.1.0"></script>
+    <script data-runtime src="data/ev-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/iv-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/luv-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/space-quests-move.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/multiblock_quests.js?v=0.1.0"></script>
+<script data-runtime src="data/icons.js?v=0.1.0"></script>
+<script data-runtime src="data/modIcons.js?v=0.1.0"></script>
+<script data-runtime src="data/fluids.js?v=0.1.0"></script>
+<script data-runtime src="data/fluid-labels.js?v=0.1.0"></script>
+<script data-runtime src="data/machslot.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/registry.browser.js?v=0.1.0"></script>
+<script data-runtime src="data/item-unification.js?v=0.1.0"></script>
+<script data-runtime src="data/item-catalog-cleanup.js?v=0.1.0"></script>
+<script data-runtime src="content.js?v=0.1.0"></script>
+<script data-runtime>CONTENT.installLegacy(GD);</script>
+<script data-runtime src="data/bucket-stacks.js?v=0.1.0"></script>
+<script data-runtime src="data/jei-decorations.js?v=0.1.0"></script>
+<script data-runtime src="data/eio.js?v=0.1.0"></script>
+<script data-runtime src="engine/content-scope.js?v=0.1.0"></script>
+<script data-runtime src="engine/craft-tools.js?v=0.1.0"></script>
+<script data-runtime src="engine/state-schema.js?v=0.1.0"></script>
+<script data-runtime src="engine/developer-mode.js?v=0.1.0"></script>
+<script data-runtime src="engine/tool-wear.js?v=0.1.0"></script>
+<script data-runtime src="engine/adapters.js?v=0.1.0"></script>
+<script data-runtime src="data/mvrecipes.js?v=0.1.0"></script>
+<script data-runtime src="data/faceIcons.js?v=0.1.0"></script>
+<script data-runtime src="data/enderio_faces.js?v=0.1.0"></script>
+<script data-runtime src="data/structure_faces.js?v=0.1.0"></script>
+<script data-runtime src="data/botania_icons.js?v=0.1.0"></script>
+<script data-runtime src="engine/definitions.js?v=0.1.0"></script>
+<script data-runtime src="data/extra-machines.js?v=0.1.0"></script>
+<script data-runtime src="engine/behavior-registry.js?v=0.1.0"></script>
+<script data-runtime src="engine/steam.js?v=0.1.0"></script>
+<script data-runtime src="engine/transactions.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-stores.js?v=0.1.0"></script>
+<script data-runtime src="engine/dropped-items.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-control.js?v=0.1.0"></script>
+<script data-runtime src="engine/processing-access.js?v=0.1.0"></script>
+<script data-runtime src="engine/processing-retry.js?v=0.1.0"></script>
+<script data-runtime src="engine/processing-configuration.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-output.js?v=0.1.0"></script>
+<script data-runtime src="data/batch-modes.js?v=0.1.0"></script>
+<script data-runtime src="engine/batch-mode.js?v=0.1.0"></script>
+<script src="engine/batch-mode-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/batch.js?v=0.1.0"></script>
+<script data-runtime src="engine/generators.js?v=0.1.0"></script>
+<script data-runtime src="engine/crafting.js?v=0.1.0"></script>
+<script data-runtime src="engine/save-migrations.js?v=0.1.0"></script>
+<script data-runtime src="engine/runtime.js?v=0.1.0"></script>
+<script data-runtime src="engine/transformer-behavior.js?v=0.1.0"></script>
+<script data-runtime src="engine/blueprints.js?v=0.1.0"></script>
+<script data-runtime src="engine/pipe-connections.js?v=0.1.0"></script>
+<script data-runtime src="engine/entities.js?v=0.1.0"></script>
+<script data-runtime src="engine/grid-space.js?v=0.1.0"></script>
+<script data-runtime src="engine/factory-layout.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/logistics.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/fluid_properties.js?v=0.1.0"></script>
+<script data-runtime src="engine/transport-interfaces.js?v=0.1.0"></script>
+<script data-runtime src="engine/logistics.js?v=0.1.0"></script>
+<script data-runtime>ENGINE.networks=new LogisticsNetwork(CONTENT,DEFS,GD.logisticsDefinitions);</script>
+<script data-runtime src="engine/commands.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-covers.js?v=0.1.0"></script>
+<script data-runtime src="engine/pipe-covers.js?v=0.1.0"></script>
+<script src="engine/machine-io-ui.js?v=0.1.0"></script>
+<script src="engine/transformer-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/material-catalog.js?v=0.1.0"></script>
+<script src="engine/material-matrix.js?v=0.1.0"></script>
+<script data-runtime src="engine/recipe-query.js?v=0.1.0"></script>
+<script data-runtime src="data/recipe-labels.js?v=0.1.0"></script>
+<script src="engine/recipe-ui.js?v=0.1.0"></script>
+<script data-runtime src="data/search-pinyin.js?v=0.1.0"></script>
+<script data-runtime src="engine/search-text.js?v=0.1.0"></script>
+<script data-runtime src="data/fluid-icons.js?v=0.1.0"></script>
+<script data-runtime src="engine/fluid-presentation.js?v=0.1.0"></script>
+<script data-runtime src="engine/fluid-renderer.js?v=0.1.0"></script>
+<script src="engine/fluid-picker.js?v=0.1.0"></script>
+<script data-runtime src="data/jei-layouts.js?v=0.1.0"></script>
+<script data-runtime src="engine/jei-layout.js?v=0.1.0"></script>
+<script src="engine/jei.js?v=0.1.0"></script>
+<script src="engine/jei-favorites.js?v=0.1.0"></script>
+<script src="engine/ore-guide.js?v=0.1.0"></script>
+<script src="engine/ore-diagram.js?v=0.1.0"></script>
+<script src="engine/ore-guide-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/structure-core.js?v=0.1.0"></script>
+<script data-runtime src="engine/structures.js?v=0.1.0"></script>
+<script data-runtime src="engine/hatch-rules.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblocks.js?v=0.1.0"></script>
+<script data-runtime src="engine/structure-upgrades.js?v=0.1.0"></script>
+<script data-runtime src="engine/processing-input-policy.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-modes.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-rules.js?v=0.1.0"></script>
+<script data-runtime src="engine/magic-absorber.js?v=0.1.0"></script>
+<script data-runtime src="engine/void-miner.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-catalog.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-visuals.js?v=0.1.0"></script>
+<script src="engine/structure-ui.js?v=0.1.0"></script>
+<script src="engine/multiblock-layout.js?v=0.1.0"></script>
+<script src="engine/multiblock-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/structure-placement.js?v=0.1.0"></script>
+<script src="engine/structure-placement-ui.js?v=0.1.0"></script>
+<script src="engine/pipe-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/secondary.js?v=0.1.0"></script>
+<script data-runtime src="engine/digital-tanks.js?v=0.1.0"></script>
+<script data-runtime src="engine/fluid-containers.js?v=0.1.0"></script>
+<script data-runtime src="engine/single-tanks.js?v=0.1.0"></script>
+<script data-runtime src="engine/line-storage.js?v=0.1.0"></script>
+<script data-runtime src="engine/fluid-storage.js?v=0.1.0"></script>
+<script data-runtime src="engine/trash-sinks.js?v=0.1.0"></script>
+<script src="engine/trash-sinks-ui.js?v=0.1.0"></script>
+<script src="engine/line-storage-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-filters.js?v=0.1.0"></script>
+<script data-runtime src="engine/type-filters.js?v=0.1.0"></script>
+<script src="engine/type-filter-ui.js?v=0.1.0"></script>
+<script src="engine/item-filter-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/tank-presentation.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-transfer.js?v=0.1.0"></script>
+<script data-runtime src="engine/shared-cargo.js?v=0.1.0"></script>
+<script src="engine/shared-cargo-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/surface-io.js?v=0.1.0"></script>
+<script src="engine/surface-io-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/coke-oven.js?v=0.1.0"></script>
+<script data-runtime src="engine/super-chests.js?v=0.1.0"></script>
+<script data-runtime src="data/cropsnh.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-mutations.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-art.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-produce.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-recipes.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-seeds.js?v=0.1.0"></script>
+<script data-runtime src="engine/farm-fields.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-growth.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-materials.js?v=0.1.0"></script>
+<script data-runtime src="engine/farming.js?v=0.1.0"></script>
+<script src="engine/ui-kit.js?v=0.1.0"></script>
+<script src="engine/ui-focus.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-status.js?v=0.1.0"></script>
+<script src="engine/farm-field-bar.js?v=0.1.0"></script>
+<script src="engine/farm-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/activities.js?v=0.1.0"></script>
+<script data-runtime src="data/end-ore.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/small_ores.js?v=0.1.0"></script>
+<script data-runtime src="engine/small-ores.js?v=0.1.0"></script>
+<script data-runtime src="engine/mining.js?v=0.1.0"></script>
+<script data-runtime src="engine/furnaces.js?v=0.1.0"></script>
+<script data-runtime src="engine/grid-furnace.js?v=0.1.0"></script>
+<script data-runtime src="engine/mechanisms.js?v=0.1.0"></script>
+<script data-runtime src="engine/resources.js?v=0.1.0"></script>
+<script data-runtime src="engine/resource-ui.js?v=0.1.0"></script>
+<script data-runtime src="core.js?v=0.1.0"></script>
+<script data-runtime src="engine/fieldwork.js?v=0.1.0"></script>
+<script data-runtime src="engine/smeltery.js?v=0.1.0"></script>
+<script data-runtime src="engine/fermentation.js?v=0.1.0"></script>
+<script data-runtime src="engine/nbt.js?v=0.1.0"></script>
+<script data-runtime src="engine/genetics.js?v=0.1.0"></script>
+<script data-runtime src="engine/native-processes.js?v=0.1.0"></script>
+<script data-runtime src="engine/large-boilers.js?v=0.1.0"></script>
+<script data-runtime src="engine/botania.js?v=0.1.0"></script>
+<script data-runtime src="engine/thaumcraft.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/tc_labels.js?v=0.1.0"></script>
+<script src="engine/thaumcraft-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/crucible.js?v=0.1.0"></script>
+<script data-runtime src="engine/tconstruct-tools.js?v=0.1.0"></script>
+<script data-runtime src="engine/tinker-parts.js?v=0.1.0"></script>
+<script data-runtime src="engine/tinker-modifiers.js?v=0.1.0"></script>
+<script data-runtime src="engine/pattern-chest.js?v=0.1.0"></script>
+<script data-runtime src="engine/tinker-workstations.js?v=0.1.0"></script>
+<script data-runtime src="engine/travel.js?v=0.1.0"></script>
+<script data-runtime src="engine/portal-frame.js?v=0.1.0"></script>
+<script src="engine/travel-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/adventures.js?v=0.1.0"></script>
+<script data-runtime src="data/adventures-end.js?v=0.1.0"></script>
+<script data-runtime src="data/space_faces.js?v=0.1.0"></script>
+<script data-runtime src="data/spaceflight.js?v=0.1.0"></script>
+<script data-runtime src="data/spaceflight-planets.js?v=0.1.0"></script>
+<script data-runtime src="data/t3-rocket.js?v=0.1.0"></script>
+<script data-runtime src="data/space-rockets.js?v=0.1.0"></script>
+<script data-runtime src="engine/space-destinations.js?v=0.1.0"></script>
+<script data-runtime src="engine/dimensions.js?v=0.1.0"></script>
+<script data-runtime src="engine/space.js?v=0.1.0"></script>
+<script data-runtime src="data/idle-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/hv-titanium-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/water-reservoir-quest.js?v=0.1.0"></script>
+<script data-runtime src="data/idle-edition-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/shared-cargo.js?v=0.1.0"></script>
+<script data-runtime src="data/idle-edition-void-miner-quest.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/chemical_quests_phase119.js?v=0.1.0"></script>
+<script data-runtime src="data/interface-phase126.js?v=0.1.0"></script>
+<script data-runtime src="engine/quests.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/water_rules.js?v=0.1.0"></script>
+<script data-runtime src="data/water_faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/water.js?v=0.1.0"></script>
+<script data-runtime src="engine/water-reservoir.js?v=0.1.0"></script>
+<script data-runtime src="engine/remoteio-reservoir.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/pump_rules.js?v=0.1.0"></script>
+<script data-runtime src="data/pump_faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/pumps.js?v=0.1.0"></script>
+<script data-runtime src="engine/smeltery-casting.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-scenes.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-flow.js?v=0.1.0"></script>
+<script data-runtime src="engine/space-vehicle.js?v=0.1.0"></script>
+<script data-runtime src="engine/spaceflight.js?v=0.1.0"></script>
+<script data-runtime src="engine/local-energy.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-sites.js?v=0.1.0"></script>
+<script data-runtime src="engine/space-activities.js?v=0.1.0"></script>
+<script data-runtime src="engine/space-facilities.js?v=0.1.0"></script>
+<script data-runtime src="data/world-map-regions.js?v=0.1.0"></script>
+<script data-runtime src="data/world-map-art.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-map-geometry.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-map-content.js?v=0.1.0"></script>
+<script src="engine/world-map-ui.js?v=0.1.0"></script>
+<script src="engine/world-ui.js?v=0.1.0"></script>
+<script src="engine/world-sites-ui.js?v=0.1.0"></script>
+<script data-runtime src="data/native_tool_speeds.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-work.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-harvest.js?v=0.1.0"></script>
+<script src="engine/world-panels.js?v=0.1.0"></script>
+<script data-runtime src="engine/game-time.js?v=0.1.0"></script>
+<script data-runtime src="engine/factory-state.js?v=0.1.0"></script>
+<script data-runtime src="engine/environment.js?v=0.1.0"></script>
+<script data-runtime src="engine/simulation.js?v=0.1.0"></script>
+<script data-runtime src="engine/player-tools.js?v=0.1.0"></script>
+<script data-runtime src="engine/world-simulation.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-layout.js?v=0.1.0"></script>
+<script data-runtime src="data/working-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/working-faces-void-miner.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-visuals.js?v=0.1.0"></script>
+<script src="engine/multiblock-output-ui.js?v=0.1.0"></script>
+<script src="factory.js?v=0.1.0"></script>
+<script data-runtime src="engine/hover-shortcuts.js?v=0.1.0"></script>
+<script src="workshop.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/presentation.browser.js?v=0.1.0"></script>
+<script data-runtime src="engine/presentation.js?v=0.1.0"></script>
+<script data-runtime src="engine/utility-multiblocks.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-farm-upgrades.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-machines.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-manager.js?v=0.1.0"></script>
+<script data-runtime src="engine/crop-genetics.js?v=0.1.0"></script>
+<script data-runtime src="data/dimensional-fluids.js?v=0.1.0"></script>
+<script data-runtime src="engine/dimensional-drills.js?v=0.1.0"></script>
+<script data-runtime src="data/native-multiblocks.js?v=0.1.0"></script>
+<script data-runtime src="data/assembly-research.js?v=0.1.0"></script>
+<script data-runtime src="engine/pattern-receivers.js?v=0.1.0"></script>
+<script data-runtime src="data/distributor.js?v=0.1.0"></script>
+<script data-runtime src="engine/ordered-distributor.js?v=0.1.0"></script>
+<script data-runtime src="engine/assembly-lines.js?v=0.1.0"></script>
+<script data-runtime src="engine/research-data.js?v=0.1.0"></script>
+<script data-runtime src="engine/aux-inventories.js?v=0.1.0"></script>
+<script data-runtime src="engine/process-multiblocks.js?v=0.1.0"></script>
+<script data-runtime src="engine/iv-multiblocks.js?v=0.1.0"></script>
+<script data-runtime src="engine/nether-interface.js?v=0.1.0"></script>
+<script data-runtime src="data/egg-machine-faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/rc-machines.js?v=0.1.0"></script>
+<script data-runtime src="engine/rc-tanks.js?v=0.1.0"></script>
+<script src="engine/rc-tank-ui.js?v=0.1.0"></script>
+<script src="engine/appearance.js?v=0.1.0"></script>
+<script data-runtime src="engine/trash.js?v=0.1.0"></script>
+<script data-runtime src="engine/manual-workbench.js?v=0.1.0"></script>
+<script data-runtime src="engine/fluid-container-items.js?v=0.1.0"></script>
+<script data-runtime src="engine/warehouse.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-cursor.js?v=0.1.0"></script>
+<script src="engine/item-drag.js?v=0.1.0"></script>
+<script src="engine/manual-workbench-ui.js?v=0.1.0"></script>
+<script src="engine/tinker-workstations-ui.js?v=0.1.0"></script>
+<script src="engine/smeltery-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/save-slots.js?v=0.1.0"></script>
+<script src="engine/save-slots-ui.js?v=0.1.0"></script>
+<script data-runtime src="data/visual-assets.js?v=0.1.0"></script>
+
+<script data-runtime src="data/moon-dust.js?v=0.1.0"></script>
+<script data-runtime src="data/item-names-zh.js?v=0.1.0"></script>
+<script data-runtime src="data/power-transformers.js?v=0.1.0"></script>
+<script data-runtime src="data/power-transformer-recipes.js?v=0.1.0"></script>
+<script data-runtime src="data/glass-tiers.js?v=0.1.0"></script>
+<script data-runtime src="data/glass-block-rules.js?v=0.1.0"></script>
+<script data-runtime src="data/recipe-fixes.js?v=0.1.0"></script>
+<script data-runtime src="data/recipe-balance.js?v=0.1.0"></script>
+<script data-runtime src="data/machine-recipes.js?v=0.1.0"></script>
+<script data-runtime src="data/tool-families.js?v=0.1.0"></script>
+<script data-runtime src="data/native-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/item-filter-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/dimension-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/type-filter-faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/ui-notices.js?v=0.1.0"></script>
+<script data-runtime src="data/native-faces-phase119.js?v=0.1.0"></script>
+<script data-runtime src="data/block-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/iv-machine-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/multiblock-native-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/native-utility-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/material_info_phase119.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-descriptions.js?v=0.1.0"></script>
+<script data-runtime>ITEM_DESCRIPTIONS.register("cropsnh-seed", CROP_SEEDS.tooltip); ITEM_DESCRIPTIONS.register("cropsnh-gene", stack=>CROP_GENETICS.tooltip(stack.k));</script>
+<script data-runtime src="engine/item-order.js?v=0.1.0"></script>
+<script data-runtime src="engine/recipe-keys.js?v=0.1.0"></script>
+<script data-runtime src="data/generated/machine_storage_rules.js?v=0.1.0"></script>
+<script data-runtime src="engine/machine-storage.js?v=0.1.0"></script>
+<script src="engine/space-launch-fx.js?v=0.1.0"></script>
+<script src="engine/space-ui.js?v=0.1.0"></script>
+<script src="engine/online-loop.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/resources.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/storage.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/read-index.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/item-type-stocking.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/network.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/patterns.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/planner.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/plan-report.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/state.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/orders.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-content.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-names.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-catalog.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/cells.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/upgrades.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/markers.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/devices.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/adapters.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/controllers.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/factory.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/legacy-deliveries.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/blocking.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/machine-bridge.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/processing.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/inventory.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/delivery.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/fluid-ingress.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/automation.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/crafting.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/execution.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/terminal.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/progress.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/eio-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/power-quests.js?v=0.1.0"></script>
+<script data-runtime src="engine/quest-goals.js?v=0.1.0"></script>
+<script data-runtime src="data/quest-repairs.js?v=0.1.0"></script>
+<script data-runtime src="data/space-late-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/item-durability.js?v=0.1.0"></script>
+<script data-runtime src="data/ic2-reactor.js?v=0.1.0"></script>
+<script data-runtime src="data/reactor-coolant-recycling.js?v=0.1.0"></script>
+<script data-runtime src="data/ic2-reactor-machine.js?v=0.1.0"></script>
+<script data-runtime src="data/ic2-reactor-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/multiblock-visual-patches.js?v=0.1.0"></script>
+<script data-runtime src="engine/item-durability.js?v=0.1.0"></script>
+<script data-runtime src="data/real-time-machines.js?v=0.1.0"></script>
+<script data-runtime src="data/dynamo-hatches.js?v=0.1.0"></script>
+<script data-runtime src="data/dynamo-faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/real-time.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-power.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-transformer.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-packets.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-packet-runner.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-outputs.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-net.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-graph.js?v=0.1.0"></script>
+<script data-runtime src="engine/power-adapter.js?v=0.1.0"></script>
+<script data-runtime src="data/power-push-flag.js?v=0.1.0"></script>
+<script data-runtime src="engine/multiblock-window.js?v=0.1.0"></script>
+<script data-runtime src="engine/structure-state.js?v=0.1.0"></script>
+<script data-runtime src="engine/reactor.js?v=0.1.0"></script>
+<script data-runtime src="data/industrial-energy-native.js?v=0.1.0"></script>
+<script data-runtime src="engine/industrial-energy.js?v=0.1.0"></script>
+<script data-runtime src="engine/industrial-processing.js?v=0.1.0"></script>
+<script data-runtime src="engine/industrial-generators.js?v=0.1.0"></script>
+<script data-runtime src="engine/luv-generation.js?v=0.1.0"></script>
+<script data-runtime src="engine/luv-generation-structures.js?v=0.1.0"></script>
+<script data-runtime src="data/fusion-structures.js?v=0.1.0"></script>
+<script data-runtime src="engine/fusion.js?v=0.1.0"></script>
+<script data-runtime src="engine/purification.js?v=0.1.0"></script>
+<script data-runtime src="engine/purification-flocculation.js?v=0.1.0"></script>
+<script data-runtime src="engine/hip-compressor.js?v=0.1.0"></script>
+<script data-runtime src="engine/neutron-activation.js?v=0.1.0"></script>
+<script data-runtime src="data/scanner-elements.js?v=0.1.0"></script>
+<script data-runtime src="engine/laboratory-machines.js?v=0.1.0"></script>
+<script data-runtime src="data/zpm-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/multiblock-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/purification-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/me-type-stocking-bus.js?v=0.1.0"></script>
+<script data-runtime src="engine/reactor-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/ui-state.js?v=0.1.0"></script>
+<script data-runtime src="data/ae-cable-dyes.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/pattern-layout.js?v=0.1.0"></script>
+<script src="engine/ae/ui.js?v=0.1.0"></script>
+<script src="data/ae-animation.js?v=0.1.0"></script>
+<script src="engine/ae/presentation.js?v=0.1.0"></script>
+<script data-runtime src="data/extra-recipes.js?v=0.1.0"></script>
+<script src="data/name-patch.js?v=0.1.0"></script>
+<script data-runtime src="data/assembly-faces.js?v=0.1.0"></script>
+<script data-runtime src="engine/assembly-info.js?v=0.1.0"></script>
+<script src="engine/distributor-ui.js?v=0.1.0"></script>
+<script data-runtime src="engine/grid-transports.js?v=0.1.0"></script>
+<script data-runtime src="engine/container-access.js?v=0.1.0"></script>
+<script data-runtime src="engine/eio/state.js?v=0.1.0"></script>
+<script data-runtime src="engine/eio/filters.js?v=0.1.0"></script>
+<script data-runtime src="engine/eio/topology.js?v=0.1.0"></script>
+<script data-runtime src="engine/eio/transport.js?v=0.1.0"></script>
+<script data-runtime src="engine/ae/relay-delivery.js?v=0.1.0"></script>
+<script data-runtime src="data/front-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/remaining-industry-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/fusion-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/zpm-faces.js?v=0.1.0"></script>
+<script data-runtime src="data/nether-interface-faces.js?v=0.1.0"></script>
+<script src="engine/eio/ui.js?v=0.1.0"></script>
+<script src="engine/eio/presentation.js?v=0.1.0"></script>
+<script data-runtime src="engine/save-items.js?v=0.1.0"></script>
+<script data-runtime src="engine/page-save.js?v=0.1.0"></script>
+<script data-runtime src="engine/save-loader.js?v=0.1.0"></script>
+<script data-runtime src="engine/save-format-modules.js?v=0.1.0"></script>
+<script data-runtime src="data/multi-input-hatches.js?v=0.1.0"></script>
+<script data-runtime src="data/craft-cache-refresh.js?v=0.1.0"></script>
+<script src="engine/quest-tree.js?v=0.1.0"></script>
+<script data-runtime src="data/crop-quests.js?v=0.1.0"></script>
+<script data-runtime src="data/quest-item-goals.js?v=0.1.0"></script>
+<script data-runtime src="data/player-manual.js?v=0.1.0"></script>
+<script src="engine/player-manual-ui.js?v=0.1.0"></script>
+<script src="game.js?v=533d532d3f"></script>
+</body>
+</html>

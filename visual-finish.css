@@ -1,0 +1,26 @@
+/* Shared layout and behavior presentation: independent of the selected skin. */
+#nav .navbtn{gap:10px}
+#nav .navbtn>.ui-glyph{width:24px;height:24px;flex:none;color:inherit;filter:none}
+#env{font-size:11px;line-height:1.55;font-variant-numeric:tabular-nums;max-width:290px;white-space:normal;flex-shrink:0}
+#topslot{min-width:0}#topslot>.dim{font-variant-numeric:tabular-nums;white-space:pre;min-width:10ch}
+#app :is(.page,#popup,#bottom) :is(.ic,img.ic){opacity:1;filter:none}
+#app .page .cell.no{opacity:1}
+.slotrow{flex-wrap:wrap}
+.slotrow>[data-p]{font-variant-numeric:tabular-nums;white-space:pre-wrap;min-width:0;flex:0 1 46ch;text-align:right}
+.slotrow>.bar{min-width:60px}
+#action-queue-popover :is(.queue-select,.queue-select small,.btn){font-variant-numeric:tabular-nums}
+.river-vista{height:210px;background:url('bg/river-wash-v3.png') center 50% / cover no-repeat}
+.river-vista :is(.river-water,.river-trough){display:none}
+.river-caption{padding:5px 10px;border-radius:4px}
+/* All transient messages use the same bounded stack, newest at the bottom. */
+#toast{display:flex;flex-direction:column;align-items:center;gap:7px;position:fixed;left:50%;bottom:118px;max-width:min(560px,90vw);padding:0;border:0;background:transparent;box-shadow:none;opacity:1;transform:translateX(-50%);z-index:30000;overflow:visible;white-space:normal;pointer-events:none;transition:none}
+.notice-bubble{display:flex;align-items:center;justify-content:center;gap:7px;max-width:100%;padding:9px 16px;border:1px solid #877b64;border-radius:20px;background:#211e19f5;color:#eee6d8;font-size:12px;line-height:1.5;box-shadow:0 4px 16px #0005;overflow-wrap:anywhere}
+.notice-bubble .ic{flex:none}.notice-message{border-color:#b0945e}.notice-message>b{flex:none;color:#dfc28e}
+#toast:empty{display:none}#gainbox{display:none}
+#app #msgs{top:54px;left:auto;right:calc(var(--qw) + 12px);width:min(440px,calc(100% - 24px));max-height:min(520px,calc(100% - 110px));border:1px solid var(--ui-edge);border-radius:8px;overflow:hidden}
+#app.qclosed #msgs{right:12px}
+#app #popup .machine-window>.foot>[data-popclose]{white-space:nowrap;min-width:40px;flex-shrink:0}
+.appearance-skin-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:16px;font-size:14px}
+.appearance-skin-options{display:flex;gap:6px}
+.appearance-skin-options>.btn{min-width:76px;font-size:13px}
+@media(max-width:1000px){#env{max-width:205px;font-size:10px}.slotrow>[data-p]{min-width:0;flex-basis:100%;text-align:left}.river-vista{height:180px}}

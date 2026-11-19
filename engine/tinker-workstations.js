@@ -1,0 +1,52 @@
+/* Manual workstations own real slots; native observed recipes remain authoritative. */
+(function(root){
+ 'use strict';
+ var C=CONTENT,TX=GTTransactions,patterns=CONTENT.recipes('tconstruct:stencil'),parts=CONTENT.recipes('tconstruct:partbuilder'),tools=CONTENT.recipes('tconstruct:toolstation'),partIndex=new Map(),toolIndex=new Map();
+ var kinds=[{id:'pickaxe',name:'镐',roles:['镐头','手柄','绑定结']},{id:'hatchet',name:'斧',roles:['斧头','手柄',null]},{id:'shovel',name:'铲',roles:['铲头','手柄',null]},{id:'broadsword',name:'剑',roles:['剑刃','手柄','宽护手']},{id:'mattock',name:'鹤嘴锄',roles:['斧头','手柄','铲头']}];
+ parts.forEach(function(r){var k=C.canonicalKey(r.req[0].k);if(!partIndex.has(k))partIndex.set(k,[]);partIndex.get(k).push(r);});
+ tools.forEach(function(r){var id=C.item(r.out[0].k).id.split(':')[1];if(!toolIndex.has(id))toolIndex.set(id,[]);toolIndex.get(id).push(r);});
+ function family(key){var d=DEFS.of(key);if(!d)return null;var map=(d.recipeMap||'').split(':');return map[0]==='tconstruct'&&['stencil','partbuilder','toolstation','patternchest'].includes(map[1])?map[1]:null;}
+ function row(){return{id:'r1',pattern:null,material:null,outputs:[null,null]};}
+ function ensure(m){var kind=family(m.k);if(!kind)return null;var w=m.workstation;if(!w){w=m.workstation={schema:1,rows:kind==='partbuilder'?[row()]:[],sequence:1,activeRow:'r1',toolKind:'pickaxe',mode:'assembly',repairInput:null,replacementInput:null,modifierInput:null,recovery:[]};if(kind!=='patternchest'){w.recovery=TX.clone((m.ins||[]).filter(Boolean));m.ins=Array(kind==='stencil'?1:3).fill(null);}}
+  if(!Array.isArray(w.rows)||!Array.isArray(w.recovery))throw Error('匠魂工作站槽位数据无效');if(!kinds.some(function(k){return k.id===w.toolKind;}))w.toolKind='pickaxe';if(kind!=='patternchest')while(m.ins.length<(kind==='stencil'?1:3))m.ins.push(null);return w;
+ }
+ function station(S,kind){return(S.fx&&S.fx.machines||[]).filter(function(m){return family(m.k)===kind&&ENTITIES.active(m);});}
+ function live(S,m){return !!m&&ENTITIES.active(m)&&!!family(m.k);}
+ function deployed(S,key){return station(S,family(key)).length>0;}
+ function migrate(S){(S.fx&&S.fx.machines||[]).forEach(function(m){if(!family(m.k)||!ENTITIES.active(m))return;ensure(m);if(ENTITIES.isGrid(m)){if(root.PIPE_CONNECTIONS)PIPE_CONNECTIONS.detach(S,m.x+','+m.y,null,m.location&&m.location.blueprintId);m.location={kind:'world',dim:'overworld'};m.x=m.y=null;}});}
+ function rowBy(m,id){return ensure(m).rows.find(function(r){return r.id===id;});}
+ function partRecipe(r){if(!r||!r.pattern||!r.material)return null;return(partIndex.get(C.canonicalKey(r.pattern.k))||[]).find(function(recipe){return recipe.in.length===1&&C.matches(recipe.in[0].k,r.material.k)&&r.material.n>=recipe.in[0].n;})||null;}
+ function processRow(m,r){if(m.job)return 0;var made=0;for(var i=0;i<64;i++){var recipe=partRecipe(r);if(!recipe)break;var out=TX.planOutput(r.outputs,recipe.out,2,function(k){return C.maxStack(k);},true);if(!out)break;r.material.n-=recipe.in[0].n;if(!r.material.n)r.material=null;r.outputs=out;made++;}if(made)m.completedBatches=(m.completedBatches||0)+made;return made;}
+ function addRow(m){if(family(m.k)!=='partbuilder')return{ok:false,code:'STATION'};var w=ensure(m);if(w.rows.length>=32)return{ok:false,code:'LIMIT'};var r=row();r.id='r'+(++w.sequence);w.rows.push(r);w.activeRow=r.id;return{ok:true,row:r};}
+ function removeRow(S,m,id){if(!live(S,m)||family(m.k)!=='partbuilder')return{ok:false,code:'STATION'};var w=ensure(m),r=rowBy(m,id);if(!r||w.rows.length<=1)return{ok:false,code:'ROW'};var items=[r.pattern,r.material].concat(r.outputs).filter(Boolean),bag=TX.planOutput(S.inv,items,S.inv.length,function(k){return C.maxStack(k);},true);if(!bag)return{ok:false,code:'OUTPUT'};S.inv.splice.apply(S.inv,[0,S.inv.length].concat(bag));w.rows=w.rows.filter(function(v){return v!==r;});if(w.activeRow===id)w.activeRow=w.rows[0].id;return{ok:true};}
+ function stencil(S,m,key){if(!live(S,m)||family(m.k)!=='stencil'||m.job)return{ok:false,code:'RUNNING'};ensure(m);var recipe=patterns.find(function(r){return r.out[0].k===key;}),s=m.ins[0];if(!recipe||!s||s.entityUid||!C.matches(recipe.in[0].k,s.k)||s.n<1)return{ok:false,code:'INPUT'};var bag=TX.planOutput(S.inv,recipe.out,S.inv.length,function(k){return C.maxStack(k);},true);if(!bag)return{ok:false,code:'OUTPUT'};s.n--;if(!s.n)m.ins[0]=null;S.inv.splice.apply(S.inv,[0,S.inv.length].concat(bag));m.workstation.stencilKey=key;m.completedBatches=(m.completedBatches||0)+1;return{ok:true,k:key,n:1};}
+ function assembly(m){var w=ensure(m),kind=kinds.find(function(k){return k.id===w.toolKind;});if(!kind||m.job)return null;return(toolIndex.get(kind.id)||[]).find(function(r){return r.in.every(function(p,i){var s=m.ins[i];return !!s&&!s.entityUid&&C.matches(p.k,s.k,{ignoreNBT:true})&&s.n>=p.n;})&&m.ins.every(function(s,i){return !s||i<r.in.length;});})||null;}
+ function takeAssembly(S,m,bulk){if(!live(S,m)||family(m.k)!=='toolstation'||m.job)return{ok:false,code:'RUNNING'};var first=assembly(m),made=0;if(!first)return{ok:false,code:'RECIPE'};
+  for(var n=0;n<(bulk?64:1);n++){var recipe=assembly(m);if(recipe!==first)break;var output=TX.clone(recipe.out[0]);if(!TINKER_TOOLS.init(output))return{ok:false,code:'TOOL_PROPERTY'};var target=bulk?S.inv:[ITEM_CURSOR.held(S)],next=TX.planOutput(target,[output],target.length,function(k){return C.maxStack(k);},true);if(!next)break;
+   recipe.in.forEach(function(p,i){m.ins[i].n-=p.n;if(!m.ins[i].n)m.ins[i]=null;});if(bulk)S.inv.splice.apply(S.inv,[0,S.inv.length].concat(next));else S.itemCursor={stack:next[0]};made++;
+  }if(made)m.completedBatches=(m.completedBatches||0)+made;return{ok:made>0,made:made,code:made?null:'OUTPUT'};
+ }
+ function acceptsPart(m,index,key){var w=ensure(m);return(toolIndex.get(w.toolKind)||[]).some(function(r){return r.in[index]&&C.matches(r.in[index].k,key,{ignoreNBT:true});});}
+ function endpoint(S,ref){var m=ENTITIES.get(S,ref.uid);if(!live(S,m))return null;var w=ensure(m),kind=family(m.k),r=ref.row&&rowBy(m,ref.row),arr,index=+ref.index,e={id:JSON.stringify(ref),ref:ref,machine:m,locked:function(){return !!m.job&&ref.kind!=='legacyOutput'&&ref.kind!=='recovery';},cap:function(s){return TX.isInstance(s)?1:CORE.maxStack(s.k);},accepts:function(){return false;}};
+  if(ref.kind==='pattern'&&kind==='partbuilder'&&r){e.get=function(){return r.pattern;};e.set=function(v){r.pattern=v;w.activeRow=r.id;processRow(m,r);};e.accepts=function(s){return !s.entityUid&&partIndex.has(C.canonicalKey(s.k));};e.cap=function(){return 1;};return e;}
+  if(ref.kind==='material'&&kind==='partbuilder'&&r){e.get=function(){return r.material;};e.set=function(v){r.material=v;w.activeRow=r.id;processRow(m,r);};e.accepts=function(s){return !s.entityUid&&(r.pattern?partIndex.get(C.canonicalKey(r.pattern.k))||[]:parts).some(function(p){return C.matches(p.in[0].k,s.k);});};return e;}
+  if(ref.kind==='rowOutput'&&kind==='partbuilder'&&r&&Number.isInteger(index)&&index>=0&&index<2){e.get=function(){return r.outputs[index];};e.set=function(v){r.outputs[index]=v;w.activeRow=r.id;processRow(m,r);};return e;}
+  if(ref.kind==='modifier'&&kind==='toolstation'){e.get=function(){return w.modifierInput||null;};e.set=function(v){w.modifierInput=v;};e.accepts=function(s){return !s.entityUid&&!!TINKER_MODIFIERS.rule(s.k);};return e;}
+  if(ref.kind==='replacementPart'&&kind==='toolstation'){e.get=function(){return w.replacementInput||null;};e.set=function(v){w.replacementInput=v;};e.accepts=function(s){var tool=m.installedItems&&m.installedItems.tool;return !s.entityUid&&!!tool&&!!TINKER_PARTS.part(tool,s.k);};return e;}
+  if(ref.kind==='repairMaterial'&&kind==='toolstation'){e.get=function(){return w.repairInput;};e.set=function(v){w.repairInput=v;};e.accepts=function(s){var tool=m.installedItems&&m.installedItems.tool;return !s.entityUid&&!!tool&&TINKER_TOOLS.repairIncrease(tool,s.k)>0;};return e;}
+  if(ref.kind==='input'&&kind!=='patternchest'){arr=m.ins;if(!Number.isInteger(index)||index<0||index>=(kind==='stencil'?1:3))return null;e.accepts=function(s){return !s.entityUid&&(kind==='stencil'?patterns.some(function(r){return C.matches(r.in[0].k,s.k);}):kind==='toolstation'&&acceptsPart(m,index,s.k));};}
+  else if(ref.kind==='legacyOutput')arr=m.outs;
+  else if(ref.kind==='recovery')arr=w.recovery;
+  else return null;
+  if(!Number.isInteger(index)||index<0||index>=arr.length)return null;e.arr=arr;e.index=index;e.get=function(){return arr[index]||null;};e.set=function(v){arr[index]=v;};return e;
+ }
+ function repair(S,m){if(!live(S,m)||family(m.k)!=='toolstation')return{ok:false,code:'STATION'};var w=ensure(m);return TINKER_TOOLS.repair(S,m,{inputs:[w.repairInput],commitInputs:function(next){w.repairInput=next[0]||null;}});}
+ function clearContents(m){var w=m.workstation;if(!w)return;(w.rows||[]).forEach(function(r){r.pattern=null;r.material=null;r.outputs=[];});w.repairInput=null;w.replacementInput=null;w.modifierInput=null;w.recovery=[];}
+ function contents(m){var w=m.workstation;if(!w)return[];return(w.rows||[]).flatMap(function(r){return[r.pattern,r.material].concat(r.outputs||[]);}).concat([w.repairInput,w.replacementInput,w.modifierInput],w.recovery||[]).filter(Boolean);}
+ var handler={ensure:ensure,tick:function(m,ctx){if(m.job)return ENGINE.batch.tick(m,ctx.world);m.status={code:'MANUAL',text:'等待操作'};return false;},acceptsItem:function(){return false;}};ENGINE.registerBehavior('tconstruct_manual',handler);
+ TINKER_TOOLS.definitions.forEach(function(d){d.behavior='tconstruct_manual';d.workstationFamily=d.recipeMap.split(':')[1];d.worldOnly=true;d.worldWorkbench=true;d.autoItems=false;d.autoFluids=false;d.uiPanels=[];});PATTERN_CHEST.keys.forEach(function(k){var d=DEFS.of(k);if(d)d.workstationFamily='patternchest';});DEFS.rebuild();
+ root.TINKER_WORKSTATIONS={family:family,ensure:ensure,station:station,deployed:deployed,migrate:migrate,rows:rowBy,patterns:patterns,kinds:kinds,partRecipe:partRecipe,processRow:processRow,addRow:addRow,removeRow:removeRow,stencil:stencil,assembly:assembly,takeAssembly:takeAssembly,endpoint:endpoint,repair:repair,contents:contents,clearContents:clearContents};
+ ITEM_TRANSFER.register('workstation',endpoint);
+})(typeof window!=='undefined'?window:globalThis);
+
+ITEM_STORES.registerEntity('tinker-workstation',function(S,m){if(m.workstation)return {views:[ITEM_STORES.view(m.uid+':workstation',m.workstation,TINKER_WORKSTATIONS.contents(m),{clear:function(){TINKER_WORKSTATIONS.clearContents(m);}})]};});

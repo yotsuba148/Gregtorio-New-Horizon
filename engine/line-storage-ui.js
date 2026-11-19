@@ -1,0 +1,10 @@
+(function(root){
+ 'use strict';var opened=null;
+ function esc(s){return String(s).replace(/[&<>"']/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[c];});}
+ function slot(ref,s,label){return'<button class="line-storage-slot" data-transfer-ref="'+esc(JSON.stringify(ref))+'" data-tip="'+esc(s?nameOf(s.k):label)+'"'+(s?' data-lookup-key="'+esc(s.k)+'"':'')+'>'+(s?iconHtml(s.k,28)+'<b>'+((s.n||1)>1?s.n:'')+'</b>':'')+'</button>';}
+ function open(uid,S,save){var m=ENTITIES.get(S,uid);if(!LINE_STORAGE.spec(m))return;var popup=document.getElementById('popup');if(opened&&opened.uid===uid&&!popup.hidden&&popup.querySelector('.line-storage-window')){refresh();return;}FACTORY.close();opened={uid:uid,S:S,save:save};popup.hidden=false;popup.classList.add('noback');popup.innerHTML='<div class="box mxwin machine-window line-storage-window"><h3 class="machine-heading">'+iconHtml(m.k,28)+'<span>'+esc(nameOf(m.k))+'<small>'+ (LINE_STORAGE.spec(m).hopper?'从上方取物，向下方送出':LINE_STORAGE.spec(m).slots+' 个槽位')+'</small></span></h3><div class="machine-body"><div class="line-storage-grid"></div></div><div class="foot"><button class="btn" data-popclose="1">关闭</button></div></div>';FACTORY.mountMove(popup.querySelector('.foot'),m,S,save);refresh();
+ }
+ function refresh(){if(!opened)return;var popup=document.getElementById('popup'),box=popup&&!popup.hidden&&popup.querySelector('.line-storage-window');if(!box){opened=null;return;}var m=ENTITIES.get(opened.S,opened.uid);if(!m||!ENTITIES.active(m)){FACTORY.close();opened=null;return;}LINE_STORAGE.ensure(m);MACHINE_COVERS.ensure(m);FACTORY.positionWindow(m,popup,DEFS.of(m.k));var s=LINE_STORAGE.spec(m),grid=box.querySelector('.line-storage-grid');grid.style.setProperty('--storage-columns',Math.min(9,s.slots));var sig=JSON.stringify(m.ins);if(grid._sig!==sig){UI_KIT.patch(grid,m.ins.map(function(item,i){return slot({type:'machine',uid:m.uid,kind:'in',index:i},item,s.only?'放入泥土':'空槽位');}).join(''));grid._sig=sig;}
+ }
+ root.LINE_STORAGE_UI={open:open,refresh:refresh};
+})(typeof window!=='undefined'?window:globalThis);
