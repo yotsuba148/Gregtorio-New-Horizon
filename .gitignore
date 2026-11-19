@@ -1,4 +1,5 @@
 /dist/
+gregtorio-save-*.json
 fangzhi-save-*.json
 *.zip
 *.log

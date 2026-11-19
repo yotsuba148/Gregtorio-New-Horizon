@@ -153,6 +153,7 @@ body{-webkit-user-select:none;user-select:none}input,textarea,[contenteditable="
 
 .settings-intro { display:grid; grid-template-columns:minmax(0,1fr) auto; align-items:start; gap:12px 20px; }
 .settings-intro-main { display:flex; align-items:center; flex-wrap:wrap; gap:10px 20px; min-width:0; }
+.settings-version { display:block; margin-top:3px; color:var(--ui-muted); font-size:var(--ui-small); font-variant-numeric:tabular-nums; }
 .settings-manual-open { display:inline-flex; align-items:center; gap:7px; min-height:var(--ui-control); max-width:100%; padding:7px 13px; overflow-wrap:anywhere; }
 .settings-author {
   display:grid;

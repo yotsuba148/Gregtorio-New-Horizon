@@ -254,7 +254,7 @@ window.exportSave = function () {
     const a = document.createElement('a');
     const href=URL.createObjectURL(blob);
     a.href = href;
-    a.download = 'fangzhi-save-' + Date.now() + '.json';
+    a.download = 'gregtorio-save-' + Date.now() + '.json';
     document.body.appendChild(a);
     a.click();
     a.remove();
